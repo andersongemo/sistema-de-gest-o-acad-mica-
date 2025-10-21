@@ -17,6 +17,15 @@ public class Aluno {
     private String nrBi; 
     private String senha;
     private int id_Classe;
+    private int id_turma_Aluno;
+    public int getId_turma_Aluno() {
+        return id_turma_Aluno;
+    }
+
+    public void setId_turma_Aluno(int id_turma_Aluno) {
+        this.id_turma_Aluno = id_turma_Aluno;
+    }
+  
     public String getNrBi() {
         return nrBi;
     }
