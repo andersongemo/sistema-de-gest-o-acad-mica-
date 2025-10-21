@@ -33,10 +33,6 @@ public class Aluno {
     public void setNrBi(String nrBi) {
         this.nrBi = nrBi;
     }
-    
-    
-    
-  
     public int getId_Classe() {
         return id_Classe;
     }
