@@ -8,7 +8,9 @@ import Classe.Classe;
 import Professor.*;
 import java.awt.*;
 import Disciplina.*;
+import java.util.*;
 import Turma.Turma;
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import javax.swing.table.*;
 import javax.swing.*;
 import java.sql.*;
@@ -16,7 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialDarkerIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialDarkerIJTheme ;
 import com.formdev.flatlaf.extras.*;
 import com.itextpdf.text.Document;
 import com.itextpdf.testutils.*;
@@ -28,7 +30,10 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.DocumentException;
 import java.io.FileOutputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 /**
  *
  * @author Anderson B. Gemo
@@ -126,7 +131,7 @@ public class TelaAdmin extends JFrame{
         
       FlatSVGIcon iconExame  = new FlatSVGIcon("svg/teachings.svg", 40, 40);
       btnExame = new JButton("Professores");
-      btnExame.setFont(new Font("Rockwell", Font.BOLD, 12));
+      btnExame.setFont(new Font("Rockwell", Font.BOLD, 10));
       btnExame.setForeground(Color.white);
       btnExame.setIcon(iconExame);
       //  btnExame.setBackground(Color.white);
@@ -137,7 +142,7 @@ public class TelaAdmin extends JFrame{
       
       FlatSVGIcon iconDisc = new FlatSVGIcon("svg/stack-of-books.svg", 40, 40);
       btnEditDisciplina = new JButton("Disciplinas");
-      btnEditDisciplina.setFont(new Font("Rockwell", Font.BOLD, 12));
+      btnEditDisciplina.setFont(new Font("Rockwell", Font.BOLD, 10));
       //btnEditDisciplina.setBackground(Color.white);
       btnEditDisciplina.setBounds(10, 200,130, 50);
       btnEditDisciplina.setForeground(Color.white);
@@ -146,7 +151,7 @@ public class TelaAdmin extends JFrame{
       menuEsquerdo.add(btnEditDisciplina);
       
       FlatSVGIcon iconHist = new FlatSVGIcon("svg/newstudent.svg", 40, 40);
-      btnNovoA = new JButton("Novo");
+      btnNovoA = new JButton("Novo A.");
       btnNovoA.setBounds(10, 270, 130, 50);
       //btnNovoA.setBackground(Color.white);
       btnNovoA.setFont(new Font("Rockwell", Font.BOLD, 12));
@@ -156,7 +161,7 @@ public class TelaAdmin extends JFrame{
       menuEsquerdo.add(btnNovoA);
       
       FlatSVGIcon iconSair = new FlatSVGIcon("svg/professora.svg", 40, 40);
-      btnNovoProf = new JButton("Novo Prof.");
+      btnNovoProf = new JButton("Novo P.");
       btnNovoProf.setBounds(10,340, 130, 50);
       btnNovoProf.setFont(new Font("Rockwell", Font.BOLD, 12));
       btnNovoProf.setForeground(Color.white);
@@ -170,7 +175,7 @@ public class TelaAdmin extends JFrame{
       menuInferior.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230)));
       menuInferior.setLayout(null);
       menuInferior.setBackground(new Color(38, 38, 38));
-      lblTipoUsuario = new JLabel("Menu de Actividades do Admin/ES3FI/Anderson");
+      lblTipoUsuario = new JLabel("Menu de Actividades do Admin/ES3FI/ABG");
       lblTipoUsuario.setFont(new Font("Rockwell", Font.BOLD, 15));
       lblTipoUsuario.setForeground(Color.white);
       lblTipoUsuario.setBounds(SwingConstants.CENTER, 5, 390, 20);
@@ -184,6 +189,86 @@ public class TelaAdmin extends JFrame{
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Erro:"+e.getMessage());
         }
+    }
+    public void reciboMatricula(){
+    Document reciboAluno = new Document();
+    String nomePDF ="Recibo matricula.pdf";
+        try {
+            
+            LocalDateTime horaMatricula = LocalDateTime.now();
+            DateTimeFormatter tipoData = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String dataMatricula = horaMatricula.format(tipoData);
+            
+            conectar();
+            Classe classeEscolhida = (Classe)  cbClasse.getSelectedItem();
+            int idClasse = classeEscolhida.getId_Classe();
+            String sql =" insert into matricula(id_aluno, id_classe,dataMatricula) values (?,?,?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, aluno.getId());
+            ps.setInt(2, idClasse);
+            ps.setString(3, dataMatricula);
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Matricula Registrada com sucesso!");
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    try{
+    PdfWriter writer = PdfWriter.getInstance(reciboAluno, new FileOutputStream(nomePDF));
+    reciboAluno.open();
+     com.itextpdf.text.Font titulo = FontFactory.getFont(FontFactory.COURIER_BOLD, 16);
+     
+     Paragraph p1 = new Paragraph("RECIBO DE MATRICULA DO ALUNO", titulo);
+     
+     p1.setAlignment(Element.ALIGN_CENTER);
+     reciboAluno.add(p1);
+     
+     Paragraph p2 = new Paragraph("");
+     reciboAluno.add(p2);
+     
+    Image logo = Image.getInstance("C:/Users/Anderson/Onedrive/NetBeansProjects/ProjectoES3FI/src/main/java/Professor/ES3.png");
+    logo.scaleToFit(150, 150);
+    logo.setAlignment(Element.ALIGN_CENTER);
+    reciboAluno.add(logo);
+    
+    Paragraph p3 = new Paragraph("");
+    reciboAluno.add(p3);
+    
+    com.itextpdf.text.Font par = FontFactory.getFont(FontFactory.COURIER_BOLD, 12);
+    Paragraph p4 = new Paragraph("DETALHES DA MATRICULA", titulo);
+    p4.setAlignment(Element.ALIGN_CENTER);
+    reciboAluno.add(p4);
+    
+      Paragraph p6 = new Paragraph("");
+      Paragraph p600 = new Paragraph("");
+    
+    Paragraph p5 = new Paragraph("Nome: "+txtNomeAluno.getText()+" "+txtApelidoAluno.getText()+"",par);
+    reciboAluno.add(p5);
+    
+    Paragraph p100 = new Paragraph("");
+    Paragraph p7 = new Paragraph("DATA DE NASCIMENTO: "+txtDnAluno.getText()+" ",par);
+    reciboAluno.add(p7);
+    Paragraph p200 = new Paragraph("");
+
+    Paragraph p8 = new Paragraph("SEXO: "+cbSexo.getSelectedItem()+" ",par);
+    reciboAluno.add(p8);
+    Paragraph p300 = new Paragraph("");
+      Paragraph p9 = new Paragraph("CLASSE: "+cbClasse.getSelectedItem()+" ",par);
+    reciboAluno.add(p9);
+    Paragraph p400 = new Paragraph("");
+      Paragraph p10 = new Paragraph("TURMA: "+cbTurmas.getSelectedItem()+" ",par);
+    reciboAluno.add(p10);
+    Paragraph p500 = new Paragraph("");
+      Paragraph p11 = new Paragraph("CODIGO: "+aluno.getId()+" ",par);
+    reciboAluno.add(p11);
+   
+    
+    
+    reciboAluno.close();
+    
+    }catch(Exception erro){
+    JOptionPane.showMessageDialog(null, erro.getMessage());
+    }
     }
       
     private void painelAlunos(){
@@ -292,35 +377,35 @@ public class TelaAdmin extends JFrame{
     painelConteudo.add(txtDnAluno);
     
     lbDocA = new JLabel("Bilhte de identidade");
-    lbDocA.setBounds(290, 50, 120, 30);
+    lbDocA.setBounds(290, 50, 150, 30);
     lbDocA.setForeground(Color.white);
     lbDocA.setFont(rw);
     painelConteudo.add(lbDocA);
 
     txtDocAluno = new JTextField();
-    txtDocAluno.setBounds(420, 50, 120, 30);
+    txtDocAluno.setBounds(440, 50, 120, 30);
     txtDocAluno.setForeground(Color.white);
     painelConteudo.add(txtDocAluno);
 
     lbSenhaA = new JLabel("Palavra-passe");
-    lbSenhaA.setBounds(290, 90, 120, 30);
+    lbSenhaA.setBounds(290, 90, 130, 30);
     lbSenhaA.setForeground(Color.white);
     lbSenhaA.setFont(rw);
     painelConteudo.add(lbSenhaA);
 
     txtSenhaAluno = new JPasswordField();
-    txtSenhaAluno.setBounds(420, 90, 120, 30);
+    txtSenhaAluno.setBounds(440, 90, 120, 30);
     txtSenhaAluno.setForeground(Color.white);
     painelConteudo.add(txtSenhaAluno);
 
     JLabel infoClasse = new JLabel("classe");
     infoClasse.setFont(rw);
     infoClasse.setForeground(Color.white);
-    infoClasse.setBounds(340, 170, 70, 30);
+    infoClasse.setBounds(210, 170, 70, 30);
     painelConteudo.add(infoClasse);
 
     cbClasse = new JComboBox<>();
-    cbClasse.setBounds(420, 170, 100, 30);
+    cbClasse.setBounds(310, 170, 100, 30);
     cbClasse.setFont(rw);  
     cbClasse.setForeground(Color.white);
     painelConteudo.add(cbClasse);
@@ -335,23 +420,36 @@ public class TelaAdmin extends JFrame{
     cbSexo = new JComboBox<>();
     cbSexo.addItem("Masculino");
     cbSexo.addItem("Feminino");
-    cbSexo.setBounds(80, 170, 100, 30);
+    cbSexo.setFont(rw);
+    cbSexo.setForeground(Color.white);
+    cbSexo.setBounds(60, 170, 120, 30);
     painelConteudo.add(cbSexo);
       
-     FlatSVGIcon icon1 = new FlatSVGIcon("svg/Guardar.svg");
+     FlatSVGIcon icon1 = new FlatSVGIcon("svg/save.svg", 40, 30);
      btnGuardarAluno = new JButton("Guardar");
-     btnGuardarAluno.setBounds(150, 210, 130, 35);
+     btnGuardarAluno.setBounds(20, 250, 140, 45);
      btnGuardarAluno.setForeground(Color.white);
-     //btnGuardarAluno.setIcon(icon1);
+     btnGuardarAluno.setIcon(icon1);
+     btnGuardarAluno.setFont(rw);
      btnGuardarAluno.addActionListener(e-> guardarAluno());
      painelConteudo.add(btnGuardarAluno);
      
-     JButton pdf = new JButton("Recibo");
-     pdf.setBounds(300,210, 130, 30);
-     painelConteudo.add(pdf);
+     FlatSVGIcon icon2 = new FlatSVGIcon("svg/pdf.svg", 40 ,30);
+     JButton btnRecibopdf = new JButton("Recibo");
+     btnRecibopdf.setBounds(180,250, 140, 45);
+     btnRecibopdf.addActionListener(e-> reciboMatricula());
+     btnRecibopdf.setFont(rw);
+     btnRecibopdf.setIcon(icon2);
+     painelConteudo.add(btnRecibopdf);
      
+     JLabel lbTurma = new JLabel("Turma");
+      lbTurma.setBounds(440, 170, 70, 30);
+      lbTurma.setForeground(Color.white);
+      lbTurma.setFont(rw);
+      painelConteudo.add(lbTurma);
+      
      cbTurmas = new JComboBox();
-     cbTurmas.setBounds(20,210, 100, 30);
+     cbTurmas.setBounds(520,170, 100, 30);
      cbTurmas.setFont(rw);
      cbTurmas.setForeground(Color.white);
      painelConteudo.add(cbTurmas);
@@ -403,7 +501,7 @@ public class TelaAdmin extends JFrame{
     }
     
     }
-    public void guardarAluno(){
+    private void guardarAluno(){
         conectar();
          aluno.setNome(txtNomeAluno.getText()); 
          aluno.setApelido(txtApelidoAluno.getText());
@@ -416,10 +514,10 @@ public class TelaAdmin extends JFrame{
            Turma turmaEscolhida = (Turma) cbTurmas.getSelectedItem();
            Id_turma = turmaEscolhida.getId_Turma();
            turma.setId_Turma(Id_turma);
-           
+           aluno.setSenha(txtSenhaAluno.getPassword());
    try{
-    String sql = "insert into aluno(nome_aluno, apelido_aluno, anonas_aluno, Sexo_aluno, nr_bi_aluno, id_classe, id_turma) values (?,?,?,?,?,?,?)";
-    PreparedStatement ps = conn.prepareStatement(sql);
+    String sql = "insert into aluno(nome_aluno, apelido_aluno, anonas_aluno, Sexo_aluno, nr_bi_aluno, id_classe, id_turma,) values (?,?,?,?,?,?,?)";
+    PreparedStatement ps = conn.prepareStatement(sql, RETURN_GENERATED_KEYS);
     ps.setString(1, aluno.getNome());
     ps.setString(2, aluno.getApelido());
     ps.setString(3, aluno.getDataNas());
@@ -428,6 +526,11 @@ public class TelaAdmin extends JFrame{
     ps.setInt(6, Id_Classe);
     ps.setInt(7, Id_turma); 
     ps.executeUpdate();
+    ResultSet rs = ps.getGeneratedKeys();
+    while(rs.next()){
+        int id_Aluno = rs.getInt(1);
+    aluno.setId(id_Aluno);
+    }
     JOptionPane.showMessageDialog(null, "Aluno Gravado");
        }
          catch(SQLException erro){
@@ -644,13 +747,22 @@ public class TelaAdmin extends JFrame{
       
       verDisciplinas();
       
-     FlatSVGIcon icon1 = new FlatSVGIcon("svg/Guardar.svg");
+     FlatSVGIcon icon4 = new FlatSVGIcon("svg/save.svg", 40, 30);
      btnGuardarProf = new JButton("Guardar");
-     btnGuardarProf.setBounds(20, 210, 130, 35);
+     btnGuardarProf.setIcon(icon4);
+     btnGuardarProf.setBounds(20, 230, 140, 45);
      btnGuardarProf.setForeground(Color.white);
-     //btnGuardarAluno.setIcon(icon1);
+     btnGuardarProf.setFont(rw);
      btnGuardarProf.addActionListener(e-> guardarProfessor());
      painelConteudo.add(btnGuardarProf);
+     
+     FlatSVGIcon icon3 = new FlatSVGIcon("svg/pdf.svg", 40, 30);
+     JButton btnReciboProf  = new JButton("Recibo");
+     btnReciboProf.setBounds(190, 230, 130, 45);
+     btnReciboProf.setFont(rw);
+     btnReciboProf.setIcon(icon3);
+     btnReciboProf.setForeground(Color.white);
+     painelConteudo.add(btnReciboProf);
       }
       
     private void painelDisciplina(){
@@ -766,8 +878,7 @@ public class TelaAdmin extends JFrame{
         txtDn.setText(tabela.getValueAt(linhaTabela, 3).toString());
         }
               }
-        });
-       
+        }); 
     }
     private void verProf(){
         tabela.repaint();
