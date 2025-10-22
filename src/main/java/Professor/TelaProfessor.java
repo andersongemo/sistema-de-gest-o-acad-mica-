@@ -60,7 +60,7 @@ public class TelaProfessor extends JFrame {
         add(lblLogo);
 
         FlatSVGIcon user = new FlatSVGIcon("svg/user.svg", 40, 40);
-        JLabel lbuser = new JLabel(professor.getNome_Professor() + "  " + professor.getApelido_Professor());
+        JLabel lbuser = new JLabel("Professor "+professor.getNome_Professor() + "  " + professor.getApelido_Professor());
         lbuser.setBounds(190, 12, 300, 50);
         lbuser.setFont(rw);
         lbuser.setIcon(user);
@@ -73,7 +73,6 @@ public class TelaProfessor extends JFrame {
         lbId.setForeground(Color.white);
         add(lbId);
 
-        // Painel esquerdo (menu)
         menuEsquerdo = new JPanel(null);
         menuEsquerdo.setBounds(15, 70, 160, 410);
 
@@ -107,7 +106,6 @@ public class TelaProfessor extends JFrame {
         btnEditDados.addActionListener(e-> mostrarPainelEdit());
         menuEsquerdo.add(btnEditDados);
 
-        // Painel inferior
         menuInferior = new JPanel(null);
         menuInferior.setBackground(new Color(38, 38, 38));
         menuInferior.setBounds(15, 500, 850, 30);
@@ -118,13 +116,11 @@ public class TelaProfessor extends JFrame {
         menuInferior.add(lblTipoUsuario);
         add(menuInferior);
 
-        // Painel central (conteúdo)
         painelConteudo = new JPanel(null);
         painelConteudo.setBounds(190, 70, 670, 410);
         painelConteudo.setBackground(new Color(38, 38, 38));
         add(painelConteudo);
 
-        // Botão de notas abre o painel de lançamento de notas
         btnNotas.addActionListener(e -> mostrarPainelNotas(rw));
     }
 
@@ -205,7 +201,6 @@ public class TelaProfessor extends JFrame {
      
      }
 
-    // PAINEL DE NOTAS (igual à lógica da TelaNotas)
     private void mostrarPainelNotas(Font rw) {
         painelConteudo.removeAll();
         painelConteudo.repaint();
@@ -232,22 +227,15 @@ public class TelaProfessor extends JFrame {
         };
 
         tabela = new JTable(linhas);
-        tabela.setFont(new Font("Arial Black", Font.BOLD, 12));
+        tabela.setFont(new Font("Arial Black", Font.PLAIN, 11));
         tabela.setForeground(Color.white);
         JScrollPane scroll = new JScrollPane(tabela);
         scroll.setBounds(10, 50, 640, 290);
         scroll.getViewport().setBackground(new Color(38, 38, 38));
         painelConteudo.add(scroll);
+        mostrarNotas(getTrimestreSelecionado());
 
-        pb = new JProgressBar(0, 100);
-        pb.setBounds(250, 360, 200, 20);
-        pb.setStringPainted(true);
-        pb.setVisible(false);
-        painelConteudo.add(pb);
-
-        carregarNotas(getTrimestreSelecionado());
-
-        cbTrimestre.addActionListener(e -> carregarNotas(getTrimestreSelecionado()));
+        cbTrimestre.addActionListener(e -> mostrarNotas(getTrimestreSelecionado()));
         btnSalvar.addActionListener(e -> guardarNotas(getTrimestreSelecionado()));
         painelConteudo.revalidate();
         painelConteudo.repaint();
@@ -279,16 +267,16 @@ public class TelaProfessor extends JFrame {
         return Integer.parseInt(cbTrimestre.getSelectedItem().toString().split(" - ")[0]);
     }
 
-    private void carregarNotas(int trimestre) {
+    private void mostrarNotas(int trimestre) {
         linhas.setRowCount(0);
         try {
             String sql = """
-             SELECT a.id_aluno, a.nome_aluno, a.apelido_aluno, n.n1, n.n2, n.n3, n.situacao
-             FROM aluno a
-             LEFT JOIN nota n ON a.id_aluno = n.id_aluno
-             AND n.id_semestre = ? AND n.id_prof = ? AND n.id_disciplina = ? AND n.id_classe = ?
-             WHERE a.id_classe = ?
-             ORDER BY a.nome_aluno
+             select a.id_aluno, a.nome_aluno, a.apelido_aluno, n.n1, n.n2, n.n3, n.situacao
+             from aluno a
+             left join nota n ON a.id_aluno = n.id_aluno
+             and n.id_semestre = ? and n.id_prof = ? and n.id_disciplina = ? and n.id_classe = ?
+             where a.id_classe = ?
+             order BY a.nome_aluno
             """;
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, trimestre);
@@ -315,9 +303,9 @@ public class TelaProfessor extends JFrame {
     private void guardarNotas(int trimestre) {
         try {
     String sql = """
-     INSERT INTO nota (id_aluno, id_semestre, id_prof, id_disciplina, id_classe, n1, n2, n3, situacao)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-     ON DUPLICATE KEY UPDATE n1=VALUES(n1), n2=VALUES(n2), n3=VALUES(n3), situacao=VALUES(situacao)
+     insert into nota (id_aluno, id_semestre, id_prof, id_disciplina, id_classe, n1, n2, n3, situacao)
+     values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+     on duplicate key update n1=VALUES(n1), n2=VALUES(n2), n3=VALUES(n3), situacao=VALUES(situacao)
     """;
     PreparedStatement ps = conn.prepareStatement(sql);
     for (int i = 0; i < linhas.getRowCount(); i++) {
@@ -342,9 +330,9 @@ public class TelaProfessor extends JFrame {
         linhas.setValueAt(media, i, 5);
         linhas.setValueAt(situacao, i, 6);
             }
-            JOptionPane.showMessageDialog(this, "Notas inseridas com sucesso!");
+            JOptionPane.showMessageDialog(null, "Notas inseridas com sucesso!");
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Erro ao salvar notas: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,e.getMessage());
         }
     } 
     public void mostrarPainelExames() {
@@ -357,11 +345,10 @@ public class TelaProfessor extends JFrame {
             return col == 2;
         }
     };
-
     tabelaExame = new JTable(modelo);
     JScrollPane scroll = new JScrollPane(tabelaExame);
     scroll.setForeground(Color.white);
-    btnSalvarExame = new JButton("Salvar Exames");
+    btnSalvarExame = new JButton("Guardar");
     btnSalvarExame.addActionListener(e -> salvarExames());
     painelConteudo.add(scroll, BorderLayout.CENTER);
     painelConteudo.add(btnSalvarExame, BorderLayout.SOUTH);
@@ -375,12 +362,12 @@ public class TelaProfessor extends JFrame {
      private void carregarExames() {
         modelo.setRowCount(0);
         try {
-            String sql = "SELECT a.id_aluno, a.nome_aluno, a.apelido_aluno, e.nota, e.situacao " +
-        "FROM aluno a " +
-                         "LEFT JOIN exame e ON a.id_aluno = e.id_aluno " +
-                         "AND e.id_prof = ? AND e.id_disciplina = ? AND e.id_classe = ? " +
-                         "WHERE a.id_classe = ? " +
-                         "ORDER BY a.nome_aluno";
+            String sql = "select a.id_aluno, a.nome_aluno, a.apelido_aluno, e.nota, e.situacao " +
+        "from aluno a " +
+                         "left JOIN exame e ON a.id_aluno = e.id_aluno " +
+                         "and e.id_prof = ? and e.id_disciplina = ? AND e.id_classe = ? " +
+                         "where a.id_classe = ? " +
+                         "order by a.nome_aluno";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, professor.getId_Professor());   // estava começando em 3
         ps.setInt(2, disciplina.getId_disciplina()); 
@@ -423,10 +410,10 @@ public class TelaProfessor extends JFrame {
                 ps.executeUpdate();
             }
             ps.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Exames salvos com sucesso!");
+            JOptionPane.showMessageDialog(null, "Notas inseridas!");
             carregarExames();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Erro ao salvar exames: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
 

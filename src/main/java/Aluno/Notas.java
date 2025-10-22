@@ -121,7 +121,6 @@ public class Notas extends JFrame {
         });
         
         menuEsquerdo.add(btnSair);
-
         painelConteudo = new JPanel(null);
         painelConteudo.setBounds(190, 70, 680, 420);
         painelConteudo.setBackground(new Color(38, 38, 38));

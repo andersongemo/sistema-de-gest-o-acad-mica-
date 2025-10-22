@@ -40,7 +40,7 @@ import java.time.format.DateTimeFormatter;
  * @author Anderson B. Gemo
  */
 public class TelaAdmin extends JFrame{
-      private JLabel lblLogo, lblTipoUsuario;
+      private JLabel lblLogo, lblTipoUsuario, lb1, lb2;
     private JPanel menuEsquerdo, menuInferior, painelConteudo;
     private JButton btnNotas, btnExame, btnEditDisciplina, btnNovoA, btnSair;
     private JTable tabela;
@@ -52,7 +52,7 @@ public class TelaAdmin extends JFrame{
     private int linhaTabela, id_Professor, Id_Classe;
     private JTextField txtNome, txtApelido, txtDn, txtDisc, txtSenha;
     private JTextField txtNomeAluno, txtApelidoAluno, txtDocAluno, txtDnAluno;
-    private JTextField txtNomeProf, txtApelidoProf, txtDocProf, txtDnProf;
+    private JTextField txtNomeProf, txtIdAlunoRM, txtApelidoProf, txtDocProf, txtDnProf;
     private JPasswordField txtSenhaAluno,txtSenhaProf;
     private JLabel lbNomeA, lbApelidoA, lbDocA, lbDnA, lbSenhaA;
     private JScrollPane scroll;
@@ -112,8 +112,8 @@ public class TelaAdmin extends JFrame{
         
         JButton btnRenova = new JButton("Renovar Matricula");
         btnRenova.setBounds(10, 5, 130,50);
-      //btnRenova.setBackground(Color.white);
         btnRenova.setForeground(Color.white);
+        btnRenova.addActionListener(e-> painelRenovaMatricula());
         btnRenova.setFont(new Font("Rockwell", Font.BOLD, 12));
         menuEsquerdo.add(btnRenova);
         
@@ -190,6 +190,99 @@ public class TelaAdmin extends JFrame{
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Erro:"+e.getMessage());
         }
+    }
+    public void painelRenovaMatricula(){
+    painelConteudo.removeAll();
+    painelConteudo.repaint();
+    Font rw  = new Font("rockwell", Font.BOLD, 15);
+    JLabel titulo = new JLabel("RENOVACAO DE MATRICULA");
+    titulo.setBounds(250, 20, 250, 25);
+    titulo.setForeground(Color.white);
+    titulo.setFont(rw);
+    painelConteudo.add(titulo);
+    JLabel info = new JLabel("Digite o ID do Aluno");
+    info.setFont(rw);
+    info.setForeground(Color.white);
+    info.setBounds(20,55, 150, 30);
+    painelConteudo.add(info);
+    
+    txtIdAlunoRM = new JTextField();
+    txtIdAlunoRM.setBounds(20, 90, 100, 25);
+    painelConteudo.add(txtIdAlunoRM);
+    
+    JButton btnVer = new JButton("Verificar");
+    btnVer.setFont(rw);
+    btnVer.addActionListener(e-> verDadosAluno());
+    btnVer.setBounds(20, 120, 100, 25);
+    btnVer.setForeground(Color.white);
+    painelConteudo.add(btnVer);
+    
+    lb1= new JLabel();
+    lb1.setForeground(Color.white);
+    lb1.setBounds(300, 50, 200, 30);
+    lb1.setFont(rw);
+    painelConteudo.add(lb1);
+            
+    lb2 = new JLabel();
+    lb2.setBounds(300, 70, 200, 30);
+    lb2.setForeground(Color.white);
+    lb2.setFont(rw);
+    painelConteudo.add(lb2);
+    
+    cbClasse = new JComboBox<>();
+    cbClasse.setBounds(20, 150, 100, 30);
+    painelConteudo.add(cbClasse);
+    
+    cbTurmas = new JComboBox<>();
+    cbTurmas.setBounds(140, 150, 100, 30);
+    painelConteudo.add(cbTurmas);
+    verClasses();
+    mostrarTurmas();
+    
+    JButton btnAtualizarMatricula = new JButton("Renovar");
+    btnAtualizarMatricula.setFont(rw);
+    btnAtualizarMatricula.setBounds(20, 190, 100, 30);
+    btnAtualizarMatricula.setForeground(Color.white);
+    btnAtualizarMatricula.addActionListener(e-> renovaMatricula());
+    painelConteudo.add(btnAtualizarMatricula);
+    
+    }
+    private void verDadosAluno(){
+    conectar();
+        try { 
+           
+            
+            aluno.setId(Integer.parseInt(txtIdAlunoRM.getText()));
+            String sql = "select * from aluno where id_aluno=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, aluno.getId());
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+             lb1.setText(rs.getString("nome_aluno")+" "+rs.getString("apelido_aluno"));   
+            lb2.setText("Nivel de Classe: "+rs.getInt("id_classe"));
+            }
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+    private void renovaMatricula(){
+    conectar();
+    try{
+         Turma turmaEscolhida = (Turma) cbTurmas.getSelectedItem();
+         Id_turma = turmaEscolhida.getId_Turma();
+         Classe classeEscolhida = (Classe) cbClasse.getSelectedItem();
+         Id_Classe = classeEscolhida.getId_Classe();
+    String Sql = "update aluno set id_classe=?, id_turma=? where id_aluno=?";
+    PreparedStatement ps = conn.prepareStatement(Sql);
+    ps.setInt(1, Id_Classe);
+    ps.setInt(2,Id_turma);
+    ps.setInt(3, aluno.getId());
+    ps.executeUpdate();
+    JOptionPane.showMessageDialog(null, "Renovacao feita com sucesso");
+    }catch(Exception erro){
+    JOptionPane.showMessageDialog(null, erro.getMessage());
+    }
     }
     
     public void reciboMatricula(){
