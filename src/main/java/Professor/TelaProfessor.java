@@ -135,6 +135,7 @@ public class TelaProfessor extends JFrame {
          Font rw = new Font("Rockwell", Font.BOLD, 15); 
          
      painelConteudo.removeAll();
+     painelConteudo.revalidate();
      painelConteudo.repaint();
     
     lbNome = new JLabel("Nome");
@@ -199,47 +200,56 @@ public class TelaProfessor extends JFrame {
      btnAtualizarDados.addActionListener(e-> atualizarDadosProf());
      painelConteudo.add(btnAtualizarDados);
      
+     painelConteudo.revalidate();
+    painelConteudo.repaint();
+     
      }
 
-    private void mostrarPainelNotas(Font rw) {
-        painelConteudo.removeAll();
-        painelConteudo.repaint();
+     private void mostrarPainelNotas(Font rw) {
+    painelConteudo.removeAll();
+    painelConteudo.revalidate();
+    painelConteudo.repaint();
 
-        cbTrimestre = new JComboBox<>();
-        cbTrimestre.addItem("1 - Trimestre 1");
-        cbTrimestre.addItem("2 - Trimestre 2");
-        cbTrimestre.addItem("3 - Trimestre 3");
-        cbTrimestre.setBounds(10, 10, 150, 25);
-        cbTrimestre.setFont(rw);
-        painelConteudo.add(cbTrimestre);
+    cbTrimestre = new JComboBox<>();
+    cbTrimestre.addItem("1 - Trimestre 1");
+    cbTrimestre.addItem("2 - Trimestre 2");
+    cbTrimestre.addItem("3 - Trimestre 3");
+    cbTrimestre.setBounds(10, 10, 150, 25);
+    cbTrimestre.setFont(rw);
+    painelConteudo.add(cbTrimestre);
 
-        btnSalvar = new JButton("Guardar");
-        btnSalvar.setBounds(10, 360, 100, 30);
-        btnSalvar.setFont(rw);
-        painelConteudo.add(btnSalvar);
+    btnSalvar = new JButton("Guardar");
+    btnSalvar.setBounds(10, 360, 100, 30);
+    btnSalvar.setFont(rw);
+    btnSalvar.setForeground(Color.white);
+    painelConteudo.add(btnSalvar);
 
-        String[] colunas = {"Código", "Nome", "Teste 1", "Teste 2", "Teste 3", "Média", "Situação"};
-        linhas = new DefaultTableModel(colunas, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column >= 2 && column <= 4;
-            }
-        };
+    String[] colunas = {"ID", "Nome", "Teste 1", "Teste 2", "Teste 3", "Media", "Situacao"};
+    linhas = new DefaultTableModel(colunas, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return column >= 2 && column <= 4;
+        }
+    };
 
-        tabela = new JTable(linhas);
-        tabela.setFont(new Font("Arial Black", Font.PLAIN, 11));
-        tabela.setForeground(Color.white);
-        JScrollPane scroll = new JScrollPane(tabela);
-        scroll.setBounds(10, 50, 640, 290);
-        scroll.getViewport().setBackground(new Color(38, 38, 38));
-        painelConteudo.add(scroll);
-        mostrarNotas(getTrimestreSelecionado());
+    tabela = new JTable(linhas);
+    tabela.setFont(new Font("Arial Black", Font.PLAIN, 10));
+    tabela.setForeground(Color.white);
+    JScrollPane scroll = new JScrollPane(tabela);
+    scroll.setBounds(10, 50, 640, 290);
+    scroll.getViewport().setBackground(new Color(38, 38, 38)); 
+    scroll.setBackground(new Color(38, 38, 38)); 
+    painelConteudo.add(scroll);
 
-        cbTrimestre.addActionListener(e -> mostrarNotas(getTrimestreSelecionado()));
-        btnSalvar.addActionListener(e -> guardarNotas(getTrimestreSelecionado()));
-        painelConteudo.revalidate();
-        painelConteudo.repaint();
-    }
+    mostrarNotas(getTrimestreSelecionado());
+
+    cbTrimestre.addActionListener(e -> mostrarNotas(getTrimestreSelecionado()));
+    btnSalvar.addActionListener(e -> guardarNotas(getTrimestreSelecionado()));
+
+    painelConteudo.revalidate();
+    painelConteudo.repaint();
+}
+
      private void atualizarDadosProf(){
     try(Connection conn = conexao.conectar()){
         String sqlAP ="update professor set nome_prof=?, apelido_prof=?, anonas_prof=?, nr_bi_prof=?, senha=? where id_prof=?";
@@ -335,28 +345,38 @@ public class TelaProfessor extends JFrame {
             JOptionPane.showMessageDialog(null,e.getMessage());
         }
     } 
-    public void mostrarPainelExames() {
+   public void mostrarPainelExames() {
     painelConteudo.removeAll();
-    painelConteudo.setLayout(new BorderLayout());
+    painelConteudo.revalidate();
+    painelConteudo.repaint();
+    painelConteudo.setLayout(null);
 
+    // 🔹 Modelo igual ao original
     modelo = new DefaultTableModel(new String[]{"ID", "Aluno", "Exame", "Situação"}, 0) {
         @Override
         public boolean isCellEditable(int row, int col) {
             return col == 2;
         }
     };
+
     tabelaExame = new JTable(modelo);
     JScrollPane scroll = new JScrollPane(tabelaExame);
-    scroll.setForeground(Color.white);
+    scroll.setBounds(10, 50, 640, 290);
+    painelConteudo.add(scroll);
+
     btnSalvarExame = new JButton("Guardar");
+    btnSalvarExame.setBounds(650, 390, 120, 35);
     btnSalvarExame.addActionListener(e -> salvarExames());
-    painelConteudo.add(scroll, BorderLayout.CENTER);
-    painelConteudo.add(btnSalvarExame, BorderLayout.SOUTH);
+    painelConteudo.add(btnSalvarExame);
+
     carregarExames();
 
     painelConteudo.revalidate();
     painelConteudo.repaint();
 }
+
+
+
 
       
      private void carregarExames() {

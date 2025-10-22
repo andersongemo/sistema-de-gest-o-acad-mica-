@@ -171,15 +171,15 @@ public class Notas extends JFrame {
         scroll.setForeground(Color.white);
         painelConteudo.add(scroll);
 
-        JButton btnAtualizar = new JButton("Atualizar");
+      /*  JButton btnAtualizar = new JButton("Atualizar");
         btnAtualizar.setBounds(300, 380, 120, 25);
         painelConteudo.add(btnAtualizar);
 
         ActionListener verNotas = e -> carregarNotas(linhas, cbTrimestre.getSelectedIndex() + 1);
         cbTrimestre.addActionListener(verNotas);
-        btnAtualizar.addActionListener(verNotas);
+        btnAtualizar.addActionListener(verNotas);*/
 
-        carregarNotas(linhas, 1);
+        mostrarNotas(linhas, 1);
         painelConteudo.revalidate();
         }
         private void mostrarPainelExames() {
@@ -328,7 +328,7 @@ public class Notas extends JFrame {
                  }
 
 
-    private void carregarNotas(DefaultTableModel modelo, int trimestre) {
+    private void mostrarNotas(DefaultTableModel modelo, int trimestre) {
         modelo.setRowCount(0);
         try {
             String sql = "select d.nome_disciplina, n.n1, n.n2, n.n3, n.situacao " +
