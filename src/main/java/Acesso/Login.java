@@ -7,7 +7,7 @@ package Acesso;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
-import Admin.Notas;
+import Aluno.Notas;
 import Aluno.Aluno;
 import Classe.Classe;
 import Disciplina.Disciplina;

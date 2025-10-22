@@ -31,6 +31,7 @@ import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.DocumentException;
+import com.mysql.cj.conf.PropertyKey;
 import java.io.FileOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -181,8 +182,8 @@ public class TelaAdmin extends JFrame{
       lblTipoUsuario.setBounds(SwingConstants.CENTER, 5, 390, 20);
       menuInferior.add(lblTipoUsuario);
       add(menuInferior);
-      
     }
+    
     private void conectar() {
         try {
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/novo", "root", "2706");
@@ -190,6 +191,7 @@ public class TelaAdmin extends JFrame{
             JOptionPane.showMessageDialog(null, "Erro:"+e.getMessage());
         }
     }
+    
     public void reciboMatricula(){
     Document reciboAluno = new Document();
     String nomePDF ="Recibo matricula.pdf";
@@ -202,7 +204,7 @@ public class TelaAdmin extends JFrame{
             conectar();
             Classe classeEscolhida = (Classe)  cbClasse.getSelectedItem();
             int idClasse = classeEscolhida.getId_Classe();
-            String sql =" insert into matricula(id_aluno, id_classe,dataMatricula) values (?,?,?)";
+            String sql =" insert into matricula(id_aluno, id_classe,data_Matricula) values (?,?,?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, aluno.getId());
             ps.setInt(2, idClasse);
@@ -261,9 +263,14 @@ public class TelaAdmin extends JFrame{
     Paragraph p500 = new Paragraph("");
       Paragraph p11 = new Paragraph("CODIGO: "+aluno.getId()+" ",par);
     reciboAluno.add(p11);
-   
-    
-    
+    Paragraph p311 = new Paragraph("");
+    reciboAluno.add(p311);
+     LocalDateTime horaMatricula = LocalDateTime.now();
+     DateTimeFormatter tipoData = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+     String dataMatricula = horaMatricula.format(tipoData);
+     
+     Paragraph p12 = new Paragraph("Documento criado em:"+dataMatricula+"",par);
+    reciboAluno.add(p12);
     reciboAluno.close();
     
     }catch(Exception erro){
@@ -314,7 +321,33 @@ public class TelaAdmin extends JFrame{
     painelConteudo.add(cbClasse);
     verClasses();
     tabelaTextField();
+    
+    FlatSVGIcon icon = new FlatSVGIcon("svg/trash.svg", 30, 30);
+    JButton btnApagarAluno = new JButton("Apagar");
+    btnApagarAluno.setFont(rw);
+    btnApagarAluno.setIcon(icon);
+    btnApagarAluno.setForeground(Color.white);
+    btnApagarAluno.addActionListener(e-> apagarAluno());
+    btnApagarAluno.setBounds(160, 370, 120, 40);
+    painelConteudo.add(btnApagarAluno);
 
+    }
+    private void apagarAluno(){
+    conectar();
+        try {
+            int linhas = tabela.getSelectedRow();
+            if (linhas != -1) {
+            id_Aluno = Integer.parseInt(tabela.getValueAt(linhas, 0).toString());
+            aluno.setId(id_Aluno);
+            }
+            String sql = "delete from aluno where id_aluno=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, aluno.getId());
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Aluno apagado!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
     }
      private void verClasses(){
        try(Connection conn = conexao.conectar()){
@@ -514,9 +547,9 @@ public class TelaAdmin extends JFrame{
            Turma turmaEscolhida = (Turma) cbTurmas.getSelectedItem();
            Id_turma = turmaEscolhida.getId_Turma();
            turma.setId_Turma(Id_turma);
-           aluno.setSenha(txtSenhaAluno.getPassword());
+           aluno.setSenha(new String(txtSenhaAluno.getPassword()));
    try{
-    String sql = "insert into aluno(nome_aluno, apelido_aluno, anonas_aluno, Sexo_aluno, nr_bi_aluno, id_classe, id_turma,) values (?,?,?,?,?,?,?)";
+    String sql = "insert into aluno(nome_aluno, apelido_aluno, anonas_aluno, Sexo_aluno, nr_bi_aluno, id_classe, id_turma,senha_aluno) values (?,?,?,?,?,?,?,?)";
     PreparedStatement ps = conn.prepareStatement(sql, RETURN_GENERATED_KEYS);
     ps.setString(1, aluno.getNome());
     ps.setString(2, aluno.getApelido());
@@ -525,6 +558,7 @@ public class TelaAdmin extends JFrame{
     ps.setString(4, aluno.getSexo());
     ps.setInt(6, Id_Classe);
     ps.setInt(7, Id_turma); 
+    ps.setString(8,  aluno.getSenha());
     ps.executeUpdate();
     ResultSet rs = ps.getGeneratedKeys();
     while(rs.next()){
@@ -643,9 +677,33 @@ public class TelaAdmin extends JFrame{
     btnAtualizar2.setFont(rw);
     btnAtualizar2.addActionListener(e-> atualizarFuncoes());
      painelConteudo.add(btnAtualizar2);
-      
-    
+     
+     FlatSVGIcon iconLixo = new FlatSVGIcon("svg/trash.svg",30,30);
+     JButton btnApagarProf = new JButton("Apagar");
+     btnApagarProf.setBounds(480, 350, 140, 40);
+     btnApagarProf.setFont(rw);
+     btnApagarProf.setIcon(iconLixo);
+     btnApagarProf.addActionListener(e-> apagarProf());
+     btnApagarProf.setForeground(Color.white);
+     painelConteudo.add(btnApagarProf);
+     
     }
+      private void apagarProf(){
+      try {
+            int linhas = tabela.getSelectedRow();
+            if (linhas != -1) {
+            id_Professor = Integer.parseInt(tabela.getValueAt(linhas, 0).toString());
+            professor.setId_Professor(id_Professor);
+            }
+            String sql = "delete from professor where id_prof=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, professor.getId_Professor());
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Professor apagado!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+      }
     public void painelNovoProfessor(){
     painelConteudo.removeAll();
     painelConteudo.repaint();
@@ -762,8 +820,71 @@ public class TelaAdmin extends JFrame{
      btnReciboProf.setFont(rw);
      btnReciboProf.setIcon(icon3);
      btnReciboProf.setForeground(Color.white);
+     btnReciboProf.addActionListener(e-> reciboProf());
      painelConteudo.add(btnReciboProf);
       }
+    private void reciboProf(){
+    Document reciboProf = new Document();
+        try {
+            PdfWriter writer = PdfWriter.getInstance(reciboProf, new FileOutputStream("Recibo professor "+txtNomeProf.getText()+""+txtApelidoProf.getText()));
+               reciboProf.open();
+     com.itextpdf.text.Font titulo = FontFactory.getFont(FontFactory.COURIER_BOLD, 16);
+     
+     Paragraph p1 = new Paragraph("RECIBO DE MATRICULA DO PROFESSOR", titulo);
+     
+     p1.setAlignment(Element.ALIGN_CENTER);
+     reciboProf.add(p1);
+     
+     Paragraph p2 = new Paragraph("");
+     reciboProf.add(p2);
+     
+    Image logo = Image.getInstance("C:/Users/Anderson/Onedrive/NetBeansProjects/ProjectoES3FI/src/main/java/Professor/ES3.png");
+    logo.scaleToFit(150, 150);
+    logo.setAlignment(Element.ALIGN_CENTER);
+    reciboProf.add(logo);
+    
+    Paragraph p3 = new Paragraph("");
+    reciboProf.add(p3);
+    
+    com.itextpdf.text.Font par = FontFactory.getFont(FontFactory.COURIER_BOLD, 12);
+    Paragraph p4 = new Paragraph("DETALHES DA MATRICULA", titulo);
+    p4.setAlignment(Element.ALIGN_CENTER);
+    reciboProf.add(p4);
+    
+      Paragraph p6 = new Paragraph("");
+      Paragraph p600 = new Paragraph("");
+    
+    Paragraph p5 = new Paragraph("Nome: "+txtNomeProf.getText()+" "+txtApelidoProf.getText()+"",par);
+    reciboProf.add(p5);
+    
+    Paragraph p100 = new Paragraph("");
+    Paragraph p7 = new Paragraph("DATA DE NASCIMENTO: "+txtDnProf.getText()+" ",par);
+    reciboProf.add(p7);
+    Paragraph p200 = new Paragraph("");
+
+    Paragraph p8 = new Paragraph("SEXO: "+cbSexo.getSelectedItem()+" ",par);
+    reciboProf.add(p8);
+    Paragraph p300 = new Paragraph("");
+      Paragraph p9 = new Paragraph("Disciplina: "+cbDisciplina.getSelectedItem()+" ",par);
+    reciboProf.add(p9);
+    Paragraph p500 = new Paragraph("");
+      Paragraph p11 = new Paragraph("CODIGO: "+professor.getId_Professor()+" ",par);
+    reciboProf.add(p11);
+    Paragraph p311 = new Paragraph("");
+    reciboProf.add(p311);
+     LocalDateTime horaMatricula = LocalDateTime.now();
+     DateTimeFormatter tipoData = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+     String dataMatricula = horaMatricula.format(tipoData);
+     
+     Paragraph p12 = new Paragraph("Documento criado em:"+dataMatricula+"",par);
+     reciboProf.add(p12);
+    reciboProf.close();
+    
+    }catch(Exception erro){
+    JOptionPane.showMessageDialog(null, erro.getMessage());
+    }
+       
+    }
       
     private void painelDisciplina(){
     painelConteudo.removeAll();

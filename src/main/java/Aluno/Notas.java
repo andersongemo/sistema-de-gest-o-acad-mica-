@@ -2,13 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Admin;
+package Aluno;
 
 /**
  *
  * @author Anderson B. Gemo
  */
 import Acesso.Login;
+import Admin.conexao;
 import Aluno.Aluno;
 import Professor.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -101,18 +102,21 @@ public class Notas extends JFrame {
         btnHist = new JButton("Dados", iconHist);
         btnHist.setBounds(10, 270, 130, 50);
         btnHist.setFont(rw);
+        btnHist.setForeground(Color.white);
         menuEsquerdo.add(btnHist);
 
         FlatSVGIcon iconSair = new FlatSVGIcon("svg/userLogout.svg", 40, 40);
         btnSair = new JButton("Sair", iconSair);
         btnSair.setBounds(10, 340, 130, 50);
         btnSair.setFont(rw);
+        btnSair.setForeground(Color.white);
         btnSair.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e){
         dispose();
         Professor professor = new Professor();
         Aluno aluno = new Aluno();
             Login lg = new Login(professor,aluno);
+            lg.setVisible(true);
         }
         });
         
@@ -129,7 +133,7 @@ public class Notas extends JFrame {
         try {
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/novo", "root", "2706");
         } catch (SQLException erro) {
-            JOptionPane.showMessageDialog(null, "Erro BD: " + erro.getMessage());
+            JOptionPane.showMessageDialog(null, erro.getMessage());
         }
     }
    
@@ -153,29 +157,30 @@ public class Notas extends JFrame {
         cbTrimestre.setBounds(120, 20, 150, 25);
         painelConteudo.add(cbTrimestre);
 
-        String[] colunas = {"Disciplina", "Teste 1", "Teste 2", "Teste 3", "Média", "Situação"};
-        DefaultTableModel modelo = new DefaultTableModel(colunas, 0) {
+        String[] colunas = {"Disciplina", "Teste 1", "Teste 2", "Teste 3", "Media", "Situacao"};
+        DefaultTableModel linhas = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
 
-        JTable tabela = new JTable(modelo);
+        JTable tabela = new JTable(linhas);
         tabela.setFont(new Font("Arial", Font.PLAIN, 13));
         tabela.setRowHeight(24);
 
         JScrollPane scroll = new JScrollPane(tabela);
         scroll.setBounds(20, 70, 640, 300);
+        scroll.setForeground(Color.white);
         painelConteudo.add(scroll);
 
         JButton btnAtualizar = new JButton("Atualizar");
         btnAtualizar.setBounds(300, 380, 120, 25);
         painelConteudo.add(btnAtualizar);
 
-        ActionListener carregar = e -> carregarNotas(modelo, cbTrimestre.getSelectedIndex() + 1);
-        cbTrimestre.addActionListener(carregar);
-        btnAtualizar.addActionListener(carregar);
+        ActionListener verNotas = e -> carregarNotas(linhas, cbTrimestre.getSelectedIndex() + 1);
+        cbTrimestre.addActionListener(verNotas);
+        btnAtualizar.addActionListener(verNotas);
 
-        carregarNotas(modelo, 1);
+        carregarNotas(linhas, 1);
         painelConteudo.revalidate();
         }
         private void mostrarPainelExames() {
@@ -185,12 +190,12 @@ public class Notas extends JFrame {
     Font rw = new Font("Rockwell", Font.BOLD, 14);
 
     String[] colunas = {"Disciplina", "Exame", "Situação"};
-    DefaultTableModel modelo = new DefaultTableModel(colunas, 0) {
+    DefaultTableModel linhas2 = new DefaultTableModel(colunas, 0) {
         @Override
         public boolean isCellEditable(int row, int column) { return false; }
     };
 
-    JTable tabela = new JTable(modelo);
+    JTable tabela = new JTable(linhas2);
     tabela.setFont(new Font("Arial", Font.PLAIN, 13));
     tabela.setRowHeight(24);
 
@@ -202,12 +207,11 @@ public class Notas extends JFrame {
     btnAtualizar.setBounds(300, 370, 120, 25);
     painelConteudo.add(btnAtualizar);
 
-    ActionListener carregar = e -> carregarExames(modelo);
+    ActionListener carregar = e -> mostrarExame(linhas2);
     btnAtualizar.addActionListener(carregar);
-
-    carregarExames(modelo);
+    mostrarExame(linhas2);
     painelConteudo.revalidate();
-}
+     }
      public void mostrarPainelEdit(){
          Font rw = new Font("Rockwell", Font.BOLD, 15); 
          
@@ -298,7 +302,7 @@ public class Notas extends JFrame {
            }
                         }
 
-    private void carregarExames(DefaultTableModel modelo) {
+    private void mostrarExame(DefaultTableModel modelo) {
     modelo.setRowCount(0);
     try {
         String sql = "select d.nome_disciplina, e.nota, e.situacao " +
@@ -321,8 +325,8 @@ public class Notas extends JFrame {
         }
     } catch (SQLException e) {
         JOptionPane.showMessageDialog(null, "Erro ao carregar exames: " + e.getMessage());
-    }
-}
+         }
+                 }
 
 
     private void carregarNotas(DefaultTableModel modelo, int trimestre) {
