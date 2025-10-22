@@ -145,7 +145,7 @@ public class TelaAdmin extends JFrame{
       btnEditDisciplina.addActionListener(e-> painelDisciplina());
       menuEsquerdo.add(btnEditDisciplina);
       
-      FlatSVGIcon iconHist = new FlatSVGIcon("svg/pasta.svg", 40, 40);
+      FlatSVGIcon iconHist = new FlatSVGIcon("svg/newstudent.svg", 40, 40);
       btnNovoA = new JButton("Novo");
       btnNovoA.setBounds(10, 270, 130, 50);
       //btnNovoA.setBackground(Color.white);
