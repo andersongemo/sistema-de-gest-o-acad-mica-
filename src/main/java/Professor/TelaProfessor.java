@@ -233,7 +233,7 @@ public class TelaProfessor extends JFrame {
     };
 
     tabela = new JTable(linhas);
-    tabela.setFont(new Font("Arial Black", Font.PLAIN, 10));
+    tabela.setFont(new Font("Rockwell", Font.BOLD, 12));
     tabela.setForeground(Color.white);
     JScrollPane scroll = new JScrollPane(tabela);
     scroll.setBounds(10, 50, 640, 290);

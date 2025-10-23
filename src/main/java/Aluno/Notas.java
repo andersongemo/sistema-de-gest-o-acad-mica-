@@ -153,6 +153,7 @@ public class Notas extends JFrame {
         cbTrimestre.addItem("1 - Trimestre 1");
         cbTrimestre.addItem("2 - Trimestre 2");
         cbTrimestre.addItem("3 - Trimestre 3");
+        cbTrimestre.setForeground(Color.white);
         cbTrimestre.setBounds(120, 20, 150, 25);
         painelConteudo.add(cbTrimestre);
 
@@ -163,9 +164,9 @@ public class Notas extends JFrame {
         };
 
         JTable tabela = new JTable(linhas);
-        tabela.setFont(new Font("Arial", Font.PLAIN, 13));
+        tabela.setFont(new Font("Rockwell", Font.BOLD, 13));
         tabela.setRowHeight(24);
-
+        tabela.setForeground(Color.white);
         JScrollPane scroll = new JScrollPane(tabela);
         scroll.setBounds(20, 70, 640, 300);
         scroll.setForeground(Color.white);

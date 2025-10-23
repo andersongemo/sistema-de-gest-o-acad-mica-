@@ -32,6 +32,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.DocumentException;
 import com.mysql.cj.conf.PropertyKey;
+import com.mysql.cj.protocol.Resultset;
 import java.io.FileOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -74,6 +75,7 @@ public class TelaAdmin extends JFrame{
         this.classe = classe;
         this.disciplina = disciplina;
         this.turma = turma;
+        //900, 570 
         setSize(900, 570);
         setLocationRelativeTo(null);
         setLayout(null);
@@ -375,7 +377,7 @@ public class TelaAdmin extends JFrame{
          Font rw = new Font("Rockwell", Font.BOLD, 12); 
     painelConteudo.removeAll();
     painelConteudo.repaint();
-      String[] Colunas = {"CODIGO", "NOME","APELIDO", "DATA DE NASCIMENTO","SENHA"};
+      String[] Colunas = {"CODIGO", "NOME","APELIDO", "DATA DE NASCIMENTO"};
     linhas = new DefaultTableModel(Colunas,0);
     tabela = new JTable(linhas);
     scroll = new JScrollPane(tabela);
@@ -398,20 +400,20 @@ public class TelaAdmin extends JFrame{
     txtApelido = new JTextField();
     txtApelido.setBounds(120, 320, 100, 30);
     txtApelido.setForeground(Color.white);
-    txtDn = new JTextField();
-    txtDn.setBounds(220, 320, 100, 30);
-    txtDn.setForeground(Color.white);
-    txtSenha = new JTextField();
-    txtSenha.setBounds(340, 320, 100, 30);
-    txtSenha.setForeground(Color.white);
-    painelConteudo.add(txtSenha);
     painelConteudo.add(txtNome);
     painelConteudo.add(txtApelido);
+    
+    txtDn = new JTextField();
+    txtDn.setBounds(240, 320, 100, 30);
+    txtDn.setForeground(Color.white);
     painelConteudo.add(txtDn);
     
     cbClasse = new JComboBox();
-    cbClasse.setBounds(450, 320, 100, 30);
+    cbClasse.setBounds(390, 320, 100, 30);
+    cbClasse.setFont(rw);
+    cbClasse.addActionListener(e-> verAlunosPorClasse());
     painelConteudo.add(cbClasse);
+    
     verClasses();
     tabelaTextField();
     
@@ -424,6 +426,27 @@ public class TelaAdmin extends JFrame{
     btnApagarAluno.setBounds(160, 370, 120, 40);
     painelConteudo.add(btnApagarAluno);
 
+    }
+    private void verAlunosPorClasse(){
+    conectar();
+        try {
+            Classe classeEscolhida = (Classe) cbClasse.getSelectedItem();
+             int idClasse = classeEscolhida.getId_Classe();
+            String sql = "select * from aluno where id_classe=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, idClasse);
+            ResultSet rs  = ps.executeQuery();
+            while(rs.next()){
+                int idAluno = rs.getInt(1);
+                String nomeAluno = rs.getString("nome_aluno");
+                String apelidoAlnuo =  rs.getString("apelido_aluno");
+                String dn = rs.getString("anonas_Aluno");
+            linhas.addRow(new Object[]{idAluno, nomeAluno, apelidoAlnuo,dn});
+            }
+        } 
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
     }
     private void apagarAluno(){
     conectar();
@@ -675,7 +698,6 @@ public class TelaAdmin extends JFrame{
            txtNome.setText(tabela.getValueAt(linha, 1).toString());
            txtApelido.setText(tabela.getValueAt(linha, 2).toString());
            txtDn.setText(tabela.getValueAt(linha, 3).toString());
-           txtSenha.setText(tabela.getValueAt(linha, 4).toString());
              }
              }
               });
@@ -683,7 +705,7 @@ public class TelaAdmin extends JFrame{
 
     public void verAlunos(){
     try(Connection conn = conexao.conectar()){
-    String mySql = "select id_aluno, nome_aluno, apelido_aluno, anonas_aluno, senha_aluno from aluno";
+    String mySql = "select id_aluno, nome_aluno, apelido_aluno, anonas_aluno from aluno";
     PreparedStatement ps = conn.prepareStatement(mySql);
     ResultSet rs = ps.executeQuery();
     while(rs.next()){
@@ -691,8 +713,7 @@ public class TelaAdmin extends JFrame{
     String nome = rs.getString("nome_aluno");
     String apelido = rs.getString("apelido_aluno");
     String dn = rs.getString("anonas_aluno");
-    String senha = rs.getString("senha_aluno");
-    linhas.addRow(new Object[] {id_Aluno, nome, apelido, dn, senha});
+    linhas.addRow(new Object[] {id_Aluno, nome, apelido, dn});
     }
     }catch(Exception erro){
     JOptionPane.showMessageDialog(null, erro.getMessage());
@@ -744,7 +765,7 @@ public class TelaAdmin extends JFrame{
     tabela.setForeground(Color.white);
     tabela.setFont(rw);
     scroll = new JScrollPane(tabela);
-    scroll.setBounds(10, 20, 680, 250);
+    scroll.setBounds(10, 20, 650, 250);
     painelConteudo.add(scroll);
     
     tabelaTxt();
@@ -1059,6 +1080,7 @@ public class TelaAdmin extends JFrame{
      ps.setString(1,disciplina.getNome_disciplina());
      ps.setInt(2, id_disc);
      ps.executeUpdate();
+     verDisciplinas();
     } catch(SQLException erro){
     erro.printStackTrace();
     }

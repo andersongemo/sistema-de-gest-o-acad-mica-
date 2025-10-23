@@ -55,7 +55,7 @@ public class Login extends JFrame {
         foto2.setBounds(350, 50,80 , 90);
         add(foto2);
         JLabel lbTitulo = new JLabel("Gestão Académica ");
-        lbTitulo.setFont(new Font("Rockwell", Font.ITALIC, 19));
+        lbTitulo.setFont(new Font("Rockwell", Font.PLAIN, 19));
         lbTitulo.setForeground(Color.white);
         lbTitulo.setBounds(330, 150, 200, 30);
         add(lbTitulo);
@@ -122,7 +122,7 @@ public class Login extends JFrame {
             JOptionPane.showMessageDialog(this, "Campos Vazios");
             return;
         }
-        if (idText.equals("877377095") && senha.equals("AdminES3FI")) {
+        if (idText.equals("1234") && senha.equals("1234")) {
              Aluno aluno = new Aluno();
              Professor professor = new Professor();
             Classe classe = new Classe();
