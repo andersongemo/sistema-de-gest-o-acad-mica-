@@ -99,6 +99,7 @@ public class Login extends JFrame {
         btnEntrar = new JButton("Entrar");
         btnEntrar.setBounds(250, 365, 200, 35);
         btnEntrar.setFont(rw);
+        btnEntrar.setForeground(Color.white);
         add(btnEntrar);
         btnEntrar.addActionListener(e -> login());
 

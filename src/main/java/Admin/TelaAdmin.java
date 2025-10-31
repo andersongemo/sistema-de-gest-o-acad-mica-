@@ -69,18 +69,20 @@ public class TelaAdmin extends JFrame{
     private Classe classe, classeEscolhida2;
     private JTextField txtNome2, txtApelido2, txtDn2;
     private int id_Aluno;
+    
     public TelaAdmin(Aluno aluno, Professor professor, Classe classe, Disciplina disciplina, Turma turma){
         this.aluno = aluno;
         this.professor = professor;
         this.classe = classe;
         this.disciplina = disciplina;
         this.turma = turma;
-        //900, 570 
         setSize(900, 570);
         setLocationRelativeTo(null);
         setLayout(null);
         setTitle("Menu do Administrador");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       
+
         Font rw = new Font("Rockwell", Font.BOLD, 12); 
         ImageIcon icon = new ImageIcon("C:/Users/Anderson/Onedrive/NetBeansProjects/ProjectoES3FI/src/main/java/Professor/ES3.png");
         lblLogo = new JLabel(icon);
@@ -101,16 +103,9 @@ public class TelaAdmin extends JFrame{
         add(painelConteudo);
         
         menuEsquerdo = new JPanel();
-       // menuEsquerdo.setBackground(new Color(3, 187, 133));
         menuEsquerdo.setLayout(null);
         menuEsquerdo.setBounds(15, 70, 160, 410);
         menuEsquerdo.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230)));
-       //menuEsquerdo.setBorder(new BevelBorder(11));
-    //    FlatSVGIcon iconMenu = new FlatSVGIcon("svg/menu.svg", 40, 40);
-      // JLabel lbIconMenu = new JLabel(iconMenu);
-       //lbIconMenu.setFont(rw);
-       //lbIconMenu.setBounds(50, 10, 40, 40);
-        //menuEsquerdo.add(lbIconMenu);
         
         JButton btnRenova = new JButton("Renovar Matricula");
         btnRenova.setBounds(10, 5, 130,50);
@@ -125,12 +120,8 @@ public class TelaAdmin extends JFrame{
        btnNotas.setBounds(10, 70, 130, 50);
        btnNotas.setForeground(Color.white);
        btnNotas.setFont(new Font("Rockwell", Font.BOLD, 12));
-      // btnNotas.setBackground(Color.white);
        btnNotas.addActionListener(e-> painelAlunos());
        menuEsquerdo.add(btnNotas);
-        //  JLabel logoNota = new JLabel(iconNotas);
-       // logoNota.setBounds(20, 30, 50, 50);
-        //menuEsquerdo.add(logoNota);
         
       FlatSVGIcon iconExame  = new FlatSVGIcon("svg/teachings.svg", 40, 40);
       btnExame = new JButton("Professores");
@@ -146,7 +137,6 @@ public class TelaAdmin extends JFrame{
       FlatSVGIcon iconDisc = new FlatSVGIcon("svg/stack-of-books.svg", 40, 40);
       btnEditDisciplina = new JButton("Disciplinas");
       btnEditDisciplina.setFont(new Font("Rockwell", Font.BOLD, 10));
-      //btnEditDisciplina.setBackground(Color.white);
       btnEditDisciplina.setBounds(10, 200,130, 50);
       btnEditDisciplina.setForeground(Color.white);
       btnEditDisciplina.setIcon(iconDisc);
@@ -156,7 +146,6 @@ public class TelaAdmin extends JFrame{
       FlatSVGIcon iconHist = new FlatSVGIcon("svg/newstudent.svg", 40, 40);
       btnNovoA = new JButton("Novo A.");
       btnNovoA.setBounds(10, 270, 130, 50);
-      //btnNovoA.setBackground(Color.white);
       btnNovoA.setFont(new Font("Rockwell", Font.BOLD, 12));
       btnNovoA.setForeground(Color.white);
       btnNovoA.setIcon(iconHist);
@@ -251,9 +240,7 @@ public class TelaAdmin extends JFrame{
     }
     private void verDadosAluno(){
     conectar();
-        try { 
-           
-            
+        try {  
             aluno.setId(Integer.parseInt(txtIdAlunoRM.getText()));
             String sql = "select * from aluno where id_aluno=?";
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -714,11 +701,12 @@ public class TelaAdmin extends JFrame{
     String apelido = rs.getString("apelido_aluno");
     String dn = rs.getString("anonas_aluno");
     linhas.addRow(new Object[] {id_Aluno, nome, apelido, dn});
-    }
+    } 
     }catch(Exception erro){
     JOptionPane.showMessageDialog(null, erro.getMessage());
-    }
-    }  private void atualizarDados(){
+      }
+    } 
+    private void atualizarDados(){
            try(Connection conn = conexao.conectar()){
            aluno.setId(id_Aluno);
            aluno.setNome(txtNome.getText());
@@ -745,11 +733,10 @@ public class TelaAdmin extends JFrame{
       painelConteudo.removeAll();
       painelConteudo.repaint();
       cbDisciplina = new JComboBox();
-    cbDisciplina.setBounds(20, 300, 150, 35);
-    cbDisciplina.setForeground(Color.white);
-    //cbDisciplina.addActionListener(e-> verDisciplinas(disciplina));
+     cbDisciplina.setBounds(20, 300, 150, 35);
+     cbDisciplina.setForeground(Color.white);
      painelConteudo.add(cbDisciplina);
-    verDisciplinas();
+     verDisciplinas();
     
    
     btnVerProf = new JButton("Ver");
@@ -800,8 +787,8 @@ public class TelaAdmin extends JFrame{
      btnApagarProf.addActionListener(e-> apagarProf());
      btnApagarProf.setForeground(Color.white);
      painelConteudo.add(btnApagarProf);
-     
     }
+      
       private void apagarProf(){
       try {
             int linhas = tabela.getSelectedRow();
@@ -1121,7 +1108,6 @@ public class TelaAdmin extends JFrame{
         try(Connection conn = conexao.conectar()){
         Disciplina disciplinaEscolhida = (Disciplina) cbDisciplina.getSelectedItem();
         String sql = "select * from professor where id_disciplina=?";
-    //String mySql = "select id_professor, nome_prof, apelido_prof, anonas_prof from professor where id_classe=? and id_disciplina=?";
     PreparedStatement ps = conn.prepareStatement(sql);
     if(disciplinaEscolhida != null){
     ps.setInt(1, disciplinaEscolhida.getId_disciplina());
@@ -1172,6 +1158,7 @@ public class TelaAdmin extends JFrame{
      JOptionPane.showMessageDialog(null, erro.getMessage());
       }
               }
+   
     public void verDisciplinasProf() {
       try (Connection conn = conexao.conectar()) {
      String select = "select id_disciplina, nome_disciplina from disciplina where id_classe=?";

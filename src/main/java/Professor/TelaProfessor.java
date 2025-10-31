@@ -200,7 +200,7 @@ public class TelaProfessor extends JFrame {
      btnAtualizarDados.addActionListener(e-> atualizarDadosProf());
      painelConteudo.add(btnAtualizarDados);
      
-     painelConteudo.revalidate();
+    painelConteudo.revalidate();
     painelConteudo.repaint();
      
      }
@@ -216,6 +216,7 @@ public class TelaProfessor extends JFrame {
     cbTrimestre.addItem("3 - Trimestre 3");
     cbTrimestre.setBounds(10, 10, 150, 25);
     cbTrimestre.setFont(rw);
+    cbTrimestre.setForeground(Color.white);
     painelConteudo.add(cbTrimestre);
 
     btnSalvar = new JButton("Guardar");
@@ -350,8 +351,13 @@ public class TelaProfessor extends JFrame {
     painelConteudo.revalidate();
     painelConteudo.repaint();
     painelConteudo.setLayout(null);
+    Font rw = new Font("Rockwell", Font.BOLD, 15); 
+    JLabel titulo = new JLabel("Exames");
+    titulo.setFont(rw);
+    titulo.setBounds(10, 10, 100, 30);
+    titulo.setForeground(Color.white);
+    painelConteudo.add(titulo);
 
-    // 🔹 Modelo igual ao original
     modelo = new DefaultTableModel(new String[]{"ID", "Aluno", "Exame", "Situação"}, 0) {
         @Override
         public boolean isCellEditable(int row, int col) {
@@ -360,25 +366,23 @@ public class TelaProfessor extends JFrame {
     };
 
     tabelaExame = new JTable(modelo);
+    tabelaExame.setFont(new Font("Rockwell", Font.BOLD, 12));
     JScrollPane scroll = new JScrollPane(tabelaExame);
+    tabelaExame.setForeground(Color.white);
     scroll.setBounds(10, 50, 640, 290);
     painelConteudo.add(scroll);
 
     btnSalvarExame = new JButton("Guardar");
-    btnSalvarExame.setBounds(650, 390, 120, 35);
+    btnSalvarExame.setBounds(10, 360, 120, 35);
     btnSalvarExame.addActionListener(e -> salvarExames());
+    btnSalvarExame.setFont(rw);
+    btnSalvarExame.setForeground(Color.white);
     painelConteudo.add(btnSalvarExame);
-
     carregarExames();
 
     painelConteudo.revalidate();
     painelConteudo.repaint();
 }
-
-
-
-
-      
      private void carregarExames() {
         modelo.setRowCount(0);
         try {
