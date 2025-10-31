@@ -33,10 +33,12 @@ public class Login extends JFrame {
     private Connection conn;
     private Professor professor;
     private Aluno aluno;
+    private JLabel status;
 
     public Login(Professor professor, Aluno aluno) {
         this.professor = professor;
         this.aluno = aluno;
+      
         setTitle("Login - Sistema Academico ES3FI");
         setSize(680, 480);
         setLayout(null);
@@ -101,10 +103,10 @@ public class Login extends JFrame {
         btnEntrar.setFont(rw);
         btnEntrar.setForeground(Color.white);
         add(btnEntrar);
-        btnEntrar.addActionListener(e -> login());
-
-       
+        btnEntrar.addActionListener(e -> login());    
     }
+     
+    
 
     private void conectar() {
         try {
