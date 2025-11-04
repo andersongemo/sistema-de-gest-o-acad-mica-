@@ -81,7 +81,6 @@ public class TelaAdmin extends JFrame{
         setLayout(null);
         setTitle("Menu do Administrador");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       
 
         Font rw = new Font("Rockwell", Font.BOLD, 12); 
         ImageIcon icon = new ImageIcon("C:/Users/Anderson/Onedrive/NetBeansProjects/ProjectoES3FI/src/main/java/Professor/ES3.png");
@@ -712,14 +711,12 @@ public class TelaAdmin extends JFrame{
            aluno.setNome(txtNome.getText());
            aluno.setApelido(txtApelido.getText());
            aluno.setDataNas(txtDn.getText());
-           aluno.setSenha(txtSenha.getText());
-           String  mySql ="update aluno set nome_aluno=?, apelido_aluno=?, anonas_aluno=?, senha_aluno=? where id_aluno=?";
+           String  mySql ="update aluno set nome_aluno=?, apelido_aluno=?, anonas_aluno=? where id_aluno=?";
            PreparedStatement ps = conn.prepareStatement(mySql);
            ps.setString(1, aluno.getNome());
            ps.setString(2, aluno.getApelido());
            ps.setString(3, aluno.getDataNas());
-           ps.setString(4, aluno.getSenha());
-           ps.setInt(5, aluno.getId());
+           ps.setInt(4, aluno.getId());
            ps.executeUpdate();
            }
              catch(Exception erro){
@@ -769,7 +766,7 @@ public class TelaAdmin extends JFrame{
     txtDn  = new JTextField();
     txtDn.setForeground(Color.white);
     txtDn.setBounds(220, 350, 80, 25);
-     painelConteudo.add(txtDn);
+    painelConteudo.add(txtDn);
     FlatSVGIcon btnIcon = new FlatSVGIcon("svg/atualizar.svg");
     btnAtualizar2 = new JButton("Atualizar");
     btnAtualizar2.setIcon(btnIcon);
@@ -777,7 +774,7 @@ public class TelaAdmin extends JFrame{
     btnAtualizar2.setForeground(Color.white);
     btnAtualizar2.setFont(rw);
     btnAtualizar2.addActionListener(e-> atualizarFuncoes());
-     painelConteudo.add(btnAtualizar2);
+    painelConteudo.add(btnAtualizar2);
      
      FlatSVGIcon iconLixo = new FlatSVGIcon("svg/trash.svg",30,30);
      JButton btnApagarProf = new JButton("Apagar");
