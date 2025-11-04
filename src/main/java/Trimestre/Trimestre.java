@@ -9,23 +9,26 @@ package Trimestre;
  * @author Anderson B. Gemo
  */
 public class Trimestre {
-private int Id_Semstre;
-    private String nome_Semestre;
+private int Id_Trimestre;
+    private String nome_Trimestre;
     
     public int getId_Semstre() {
-        return Id_Semstre;
+        return Id_Trimestre;
     }
 
     public void setId_Semstre(int Id_Semstre) {
-        this.Id_Semstre = Id_Semstre;
+        this.Id_Trimestre = Id_Semstre;
     }
 
     public String getNome_Semestre() {
-        return nome_Semestre;
+        return nome_Trimestre;
     }
 
     public void setNome_Semestre(String nome_Semestre) {
-        this.nome_Semestre = nome_Semestre;
+        this.nome_Trimestre = nome_Semestre;
+    }
+    public String toString(){
+    return nome_Trimestre; 
     }
     
 }

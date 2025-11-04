@@ -121,6 +121,7 @@ public class TelaAdmin extends JFrame{
        btnNotas.setFont(new Font("Rockwell", Font.BOLD, 12));
        btnNotas.addActionListener(e-> painelAlunos());
        menuEsquerdo.add(btnNotas);
+     
         
       FlatSVGIcon iconExame  = new FlatSVGIcon("svg/teachings.svg", 40, 40);
       btnExame = new JButton("Professores");
@@ -413,6 +414,7 @@ public class TelaAdmin extends JFrame{
     painelConteudo.add(btnApagarAluno);
 
     }
+    
     private void verAlunosPorClasse(){
     conectar();
         try {
@@ -451,6 +453,7 @@ public class TelaAdmin extends JFrame{
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
+    
      private void verClasses(){
        try(Connection conn = conexao.conectar()){
        String mySql = "select id_classe, nome_classe from classe";
