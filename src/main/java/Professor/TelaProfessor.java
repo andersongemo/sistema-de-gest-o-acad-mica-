@@ -9,7 +9,6 @@ import java.sql.*;
 import javax.swing.table.DefaultTableModel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialDarkerIJTheme;
-
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
@@ -32,7 +31,6 @@ public class TelaProfessor extends JFrame {
     private Trimestre trimestre;
     private JTextField txtNome, txtApelido, txtDoc, txtDn, txtSenha;
 
-    // Componentes painel de notas
     private JTable tabela, tabelaExame;
     private DefaultTableModel linhas, modelo;
     private JComboBox<String> cbTrimestre;
@@ -52,8 +50,6 @@ public class TelaProfessor extends JFrame {
         Font rw = new Font("Rockwell", Font.BOLD, 12);
 
         conectar();
-
-        // Logo e cabeçalho
         ImageIcon icon = new ImageIcon("C:/Users/Anderson/Onedrive/NetBeansProjects/ProjectoES3FI/src/main/java/Professor/ES3.png");
         lblLogo = new JLabel(icon);
         lblLogo.setBounds(20, -45, 150, 150);
@@ -120,7 +116,6 @@ public class TelaProfessor extends JFrame {
         painelConteudo.setBounds(190, 70, 670, 410);
         painelConteudo.setBackground(new Color(38, 38, 38));
         add(painelConteudo);
-
         btnNotas.addActionListener(e -> mostrarPainelNotas(rw));
     }
 

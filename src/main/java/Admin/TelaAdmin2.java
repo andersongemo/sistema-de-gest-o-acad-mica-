@@ -240,6 +240,7 @@ public class TelaAdmin2 extends JFrame{
           }
       }
       
+      
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel("com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialDarkerIJTheme");
