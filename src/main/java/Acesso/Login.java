@@ -38,7 +38,6 @@ public class Login extends JFrame {
     public Login(Professor professor, Aluno aluno) {
         this.professor = professor;
         this.aluno = aluno;
-      
         setTitle("Login - Sistema Academico ES3FI");
         setSize(680, 480);
         setLayout(null);
@@ -105,9 +104,7 @@ public class Login extends JFrame {
         add(btnEntrar);
         btnEntrar.addActionListener(e -> login());    
     }
-     
     
-
     private void conectar() {
         try {
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/novo", "root", "2706");
@@ -142,27 +139,26 @@ public class Login extends JFrame {
             loginProfessor(idText, senha);
         }
     }
-
     private void loginAluno(String txtID_aluno, String txtSenha_aluno) {
         try {
-            aluno.setId(Integer.parseInt(txtID_aluno));
-            aluno.setSenha(txtSenha_aluno);
-            String sql = "Select * from aluno where id_aluno=? and senha_aluno=?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, aluno.getId());
-            ps.setString(2, aluno.getSenha());
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                aluno.setNome(rs.getString("nome_aluno"));
-                aluno.setApelido(rs.getString("apelido_aluno"));
-                aluno.setId_Classe(rs.getInt("id_classe"));
-                aluno.setSenha(rs.getString("senha_aluno"));
-                aluno.setDataNas(rs.getString("anonas_aluno"));
-                aluno.setNrBi(rs.getString("nr_bi_aluno"));
-                JOptionPane.showMessageDialog(null, "Bem-vindo " + aluno.getNome() + " " + aluno.getApelido());
-                Notas n = new Notas(aluno);
-                n.setVisible(true);
-                dispose();
+        aluno.setId(Integer.parseInt(txtID_aluno));
+        aluno.setSenha(txtSenha_aluno);
+        String sql = "Select * from aluno where id_aluno=? and senha_aluno=?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, aluno.getId());
+        ps.setString(2, aluno.getSenha());
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+        aluno.setNome(rs.getString("nome_aluno"));
+        aluno.setApelido(rs.getString("apelido_aluno"));
+        aluno.setId_Classe(rs.getInt("id_classe"));
+        aluno.setSenha(rs.getString("senha_aluno"));
+        aluno.setDataNas(rs.getString("anonas_aluno"));
+        aluno.setNrBi(rs.getString("nr_bi_aluno"));
+        JOptionPane.showMessageDialog(null, "Bem-vindo " + aluno.getNome() + " " + aluno.getApelido());
+        Notas n = new Notas(aluno);
+        n.setVisible(true);
+        dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Invalido!");
             }
@@ -181,18 +177,18 @@ public class Login extends JFrame {
             ps.setString(2, professor.getSenha_Professor());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                professor.setNome_Professor(rs.getString("nome_prof"));
-                professor.setApelido_Professor(rs.getString("apelido_prof"));
-                professor.setNrBiProf(rs.getString("nr_bi_prof"));
-                professor.setSenha_Professor(rs.getString("senha"));
-                professor.setDataNasc(rs.getString("anonas_prof"));
-                Classe classe = verClasseProfessor(professor.getId_Professor());
-                Disciplina disc = verDisciplinaPorProfessor(professor.getId_Professor());
+            professor.setNome_Professor(rs.getString("nome_prof"));
+            professor.setApelido_Professor(rs.getString("apelido_prof"));
+            professor.setNrBiProf(rs.getString("nr_bi_prof"));
+            professor.setSenha_Professor(rs.getString("senha"));
+            professor.setDataNasc(rs.getString("anonas_prof"));
+            Classe classe = verClasseProfessor(professor.getId_Professor());
+            Disciplina disc = verDisciplinaPorProfessor(professor.getId_Professor());
 
-                JOptionPane.showMessageDialog(null, "Bem-vindo, " + professor.getNome_Professor() + " " + professor.getApelido_Professor());
-                TelaProfessor tp = new TelaProfessor(professor, classe, disc);
-                tp.setVisible(true);
-                dispose();
+            JOptionPane.showMessageDialog(null, "Bem-vindo, " + professor.getNome_Professor() + " " + professor.getApelido_Professor());
+            TelaProfessor tp = new TelaProfessor(professor, classe, disc);
+            tp.setVisible(true);
+            dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Invalido");
             }
@@ -221,18 +217,18 @@ public class Login extends JFrame {
 
     private Disciplina verDisciplinaPorProfessor(int id_professor) {
         try {
-            String sql = "Select d.* from disciplina d join professor p on d.id_disciplina = p.id_disciplina where p.id_prof = ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, professor.getId_Professor());
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Disciplina d = new Disciplina();
-                d.setId_disciplina(rs.getInt("id_disciplina"));
-                d.setNome_disciplina(rs.getString("nome_disciplina"));
-                return d;
+        String sql = "Select d.* from disciplina d join professor p on d.id_disciplina = p.id_disciplina where p.id_prof = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, professor.getId_Professor());
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+        Disciplina d = new Disciplina();
+        d.setId_disciplina(rs.getInt("id_disciplina"));
+        d.setNome_disciplina(rs.getString("nome_disciplina"));
+        return d;
             }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Erro ao buscar disciplina: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "dsiciplina invalida: " + e.getMessage());
         }
         return null;
     }

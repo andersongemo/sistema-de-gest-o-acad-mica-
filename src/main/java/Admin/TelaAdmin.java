@@ -8,6 +8,7 @@ import Classe.Classe;
 import Professor.*;
 import java.awt.*;
 import Disciplina.*;
+import Trimestre.Trimestre;
 import java.util.*;
 import Turma.Turma;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -95,6 +96,22 @@ public class TelaAdmin extends JFrame{
         lbuser.setForeground(Color.white);
         lbuser.setIcon(user);
         add(lbuser);
+        
+        Trimestre t = new Trimestre();
+        TelaAdmin2 ta2 = new TelaAdmin2(aluno, professor, classe, disciplina, turma,t);
+        FlatSVGIcon proximo = new FlatSVGIcon("svg/proximo.svg", 25, 25);
+        JButton novaTela = new JButton();
+        novaTela.setBounds(800, 30, 50, 30);
+        novaTela.setIcon(proximo);
+        novaTela.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ta2.setVisible(true);
+                dispose();
+            }
+        });
+        add(novaTela);
+        
         
         painelConteudo = new JPanel(null);
         painelConteudo.setBounds(190, 70, 680, 420);
@@ -241,16 +258,15 @@ public class TelaAdmin extends JFrame{
     private void verDadosAluno(){
     conectar();
         try {  
-            aluno.setId(Integer.parseInt(txtIdAlunoRM.getText()));
-            String sql = "select * from aluno where id_aluno=?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, aluno.getId());
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()){
-             lb1.setText(rs.getString("nome_aluno")+" "+rs.getString("apelido_aluno"));   
-            lb2.setText("Nivel de Classe: "+rs.getInt("id_classe"));
-            }
-            
+        aluno.setId(Integer.parseInt(txtIdAlunoRM.getText()));
+        String sql = "select * from aluno where id_aluno=?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, aluno.getId());
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+         lb1.setText(rs.getString("nome_aluno")+" "+rs.getString("apelido_aluno"));   
+        lb2.setText("Nivel de Classe: "+rs.getInt("id_classe"));
+        }    
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
@@ -358,7 +374,7 @@ public class TelaAdmin extends JFrame{
     }catch(Exception erro){
     JOptionPane.showMessageDialog(null, erro.getMessage());
     }
-    }
+       }
       
     private void painelAlunos(){
          Font rw = new Font("Rockwell", Font.BOLD, 12); 
@@ -400,7 +416,6 @@ public class TelaAdmin extends JFrame{
     cbClasse.setFont(rw);
     cbClasse.addActionListener(e-> verAlunosPorClasse());
     painelConteudo.add(cbClasse);
-    
     verClasses();
     tabelaTextField();
     
@@ -412,7 +427,6 @@ public class TelaAdmin extends JFrame{
     btnApagarAluno.addActionListener(e-> apagarAluno());
     btnApagarAluno.setBounds(160, 370, 120, 40);
     painelConteudo.add(btnApagarAluno);
-
     }
     
     private void verAlunosPorClasse(){
@@ -594,7 +608,8 @@ public class TelaAdmin extends JFrame{
      mostrarTurmas();
      }
     
-     public void mostrarTurmas(){
+    
+    public void mostrarTurmas(){
     conectar();
     try{
     String verTurmas = "select id_turma, nome_turma from turma";
@@ -710,17 +725,17 @@ public class TelaAdmin extends JFrame{
     } 
     private void atualizarDados(){
            try(Connection conn = conexao.conectar()){
-           aluno.setId(id_Aluno);
-           aluno.setNome(txtNome.getText());
-           aluno.setApelido(txtApelido.getText());
-           aluno.setDataNas(txtDn.getText());
-           String  mySql ="update aluno set nome_aluno=?, apelido_aluno=?, anonas_aluno=? where id_aluno=?";
-           PreparedStatement ps = conn.prepareStatement(mySql);
-           ps.setString(1, aluno.getNome());
-           ps.setString(2, aluno.getApelido());
-           ps.setString(3, aluno.getDataNas());
-           ps.setInt(4, aluno.getId());
-           ps.executeUpdate();
+        aluno.setId(id_Aluno);
+        aluno.setNome(txtNome.getText());
+        aluno.setApelido(txtApelido.getText());
+        aluno.setDataNas(txtDn.getText());
+        String  mySql ="update aluno set nome_aluno=?, apelido_aluno=?, anonas_aluno=? where id_aluno=?";
+        PreparedStatement ps = conn.prepareStatement(mySql);
+        ps.setString(1, aluno.getNome());
+        ps.setString(2, aluno.getApelido());
+        ps.setString(3, aluno.getDataNas());
+        ps.setInt(4, aluno.getId());
+        ps.executeUpdate();
            }
              catch(Exception erro){
            JOptionPane.showMessageDialog(null, erro.getMessage());
@@ -730,9 +745,9 @@ public class TelaAdmin extends JFrame{
       private void painelProfessor(){
         
       Font rw = new Font("Rockwell", Font.BOLD, 12); 
-      painelConteudo.removeAll();
-      painelConteudo.repaint();
-      cbDisciplina = new JComboBox();
+     painelConteudo.removeAll();
+     painelConteudo.repaint();
+     cbDisciplina = new JComboBox();
      cbDisciplina.setBounds(20, 300, 150, 35);
      cbDisciplina.setForeground(Color.white);
      painelConteudo.add(cbDisciplina);
@@ -791,15 +806,15 @@ public class TelaAdmin extends JFrame{
       
       private void apagarProf(){
       try {
-            int linhas = tabela.getSelectedRow();
-            if (linhas != -1) {
-            id_Professor = Integer.parseInt(tabela.getValueAt(linhas, 0).toString());
-            professor.setId_Professor(id_Professor);
-            }
-            String sql = "delete from professor where id_prof=?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, professor.getId_Professor());
-            ps.executeUpdate();
+    int linhas = tabela.getSelectedRow();
+    if (linhas != -1) {
+    id_Professor = Integer.parseInt(tabela.getValueAt(linhas, 0).toString());
+    professor.setId_Professor(id_Professor);
+    }
+    String sql = "delete from professor where id_prof=?";
+    PreparedStatement ps = conn.prepareStatement(sql);
+    ps.setInt(1, professor.getId_Professor());
+    ps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Professor apagado!");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
@@ -984,7 +999,6 @@ public class TelaAdmin extends JFrame{
     }catch(Exception erro){
     JOptionPane.showMessageDialog(null, erro.getMessage());
     }
-       
     }
       
     private void painelDisciplina(){
@@ -1029,7 +1043,40 @@ public class TelaAdmin extends JFrame{
     btnGuardarDisc.setFont(rw);
     btnGuardarDisc.addActionListener(e-> guardarDisc());
     painelConteudo.add(btnGuardarDisc);
+    
+    FlatSVGIcon iconLixo = new FlatSVGIcon("svg/trash.svg",30,30);
+    JButton btnApagar = new JButton();
+    btnApagar.setBounds(600, 350, 70, 40);
+    btnApagar.setIcon(iconLixo);
+    btnApagar.addActionListener(e-> apagarDisciplina());
+    painelConteudo.add(btnApagar);
     }
+    
+    private void apagarDisciplina() {
+    int linhaSelecionada = tabela.getSelectedRow();
+    if (linhaSelecionada == -1) {
+        JOptionPane.showMessageDialog(null, "Escolhe uma disciplina!");
+        return;
+    }
+    int idDisciplina = (int) tabela.getValueAt(linhaSelecionada, 0); 
+    int confirmar = JOptionPane.showConfirmDialog(
+            null,
+            "Deseja realmente apagar esta disciplina?",
+            "Confirmação",
+            JOptionPane.YES_NO_OPTION );
+    if (confirmar == JOptionPane.YES_OPTION) {
+        String sql = "Delete from disciplina where id_disciplina = ?";
+        try (Connection conn = conexao.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idDisciplina);
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Disciplina apagada com sucesso!");
+            verDisciplinas();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+}
       private void guardarDisc(){
       conectar();
     try {
@@ -1088,8 +1135,8 @@ public class TelaAdmin extends JFrame{
         }catch(SQLException erro){
         JOptionPane.showMessageDialog(null, erro.getMessage());
         }
-    
     }
+    
     private void tabelaTxt(){
         tabela.addMouseListener(new MouseAdapter(){
         public void mouseClicked(MouseEvent e){
@@ -1212,5 +1259,4 @@ public class TelaAdmin extends JFrame{
         Turma turma = new Turma();
                 SwingUtilities.invokeLater(()-> new TelaAdmin(aluno,professor,classe, disciplina, turma).setVisible(true));
     }
-    
 }

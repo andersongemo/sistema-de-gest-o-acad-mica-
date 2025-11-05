@@ -46,9 +46,6 @@ public class TelaAdmin2 extends JFrame{
     private Trimestre trimestre;
     private Connection conn;
     
-    
-    
-    
       public TelaAdmin2(Aluno aluno, Professor professor, Classe classe, Disciplina disciplina, Turma turma, Trimestre  trimestre){
         this.aluno = aluno;
         this.professor = professor;
@@ -106,18 +103,14 @@ public class TelaAdmin2 extends JFrame{
        btnPautasExame.setForeground(Color.white);
        btnPautasExame.addActionListener(e-> painelPautasExame());
        menuEsquerdo.add(btnPautasExame);
-         add(menuEsquerdo);
+       add(menuEsquerdo);
          
-         btnDisciplinas = new JButton("Gerir Disciplinas");
-         btnDisciplinas.setBounds(10, 200, 130, 50);
+       btnDisciplinas = new JButton("Gerir Disciplinas");
+       btnDisciplinas.setBounds(10, 200, 130, 50);
        btnDisciplinas.setFont(rw);
        btnDisciplinas.setForeground(Color.white);
-     //  btnDisciplinas.addActionListener(e-> ());
        menuEsquerdo.add(btnDisciplinas);
          add(menuEsquerdo);
-         
-      
-          
       }
         private void conectar() {
                 try {
@@ -171,8 +164,6 @@ public class TelaAdmin2 extends JFrame{
       btnProf.addActionListener(e-> verSenhaprof());
       btnProf.setForeground(Color.white);
       painelConteudo.add(btnProf);
-      
-
       }
       
       public void painelPautas(){
@@ -218,7 +209,6 @@ public class TelaAdmin2 extends JFrame{
       cbDisciplina.addActionListener(e -> carregarPautas());
       verDisciplinas();
       verTrimestre();
-    
       }
       public void carregarPautas() {
     Trimestre trimestre = (Trimestre) cbTrimestre.getSelectedItem();
@@ -226,22 +216,21 @@ public class TelaAdmin2 extends JFrame{
     if (trimestre == null || disciplina == null) return;
     linhas.setRowCount(0);
     String sql = """
-    SELECT a.id_aluno,
-           CONCAT(a.nome_aluno, ' ', a.apelido_aluno) AS nome_completo,
+    Select a.id_aluno,
+           Concat(a.nome_aluno, ' ', a.apelido_aluno) as nome_completo,
            n.n1, n.n2, n.n3,
-           ROUND((n.n1 + n.n2 + n.n3)/3, 2) AS media,
+           round((n.n1 + n.n2 + n.n3)/3, 2) AS media,
            n.situacao
-    FROM nota n
+    from nota n
     JOIN aluno a ON a.id_aluno = n.id_aluno
-    WHERE n.id_disciplina = ? AND n.id_semestre = ?
-""";
+    where n.id_disciplina = ? and n.id_semestre = ?
+      """;
 
     conectar();
     try {
          PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, disciplina.getId_disciplina());
         ps.setInt(2, trimestre.getId_Semstre());
-
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
              Object[] row = {
@@ -259,7 +248,6 @@ public class TelaAdmin2 extends JFrame{
         e.printStackTrace();
     }
     }
-
       public void painelPautasExame(){
        painelConteudo.removeAll();
        painelConteudo.repaint();
@@ -283,7 +271,6 @@ public class TelaAdmin2 extends JFrame{
       btnPDF.setBounds(400, 20, 200, 30);
       btnPDF.addActionListener(e-> pdfPautaExames(tabela, "pautas_exames.pdf"));
       painelConteudo.add(btnPDF);
-      
           
     String Colunas[] = {"Nome","Portugues", "Matematica", "Biologia","Fisica","Ingles","Media","Situacao"};
     linhas = new DefaultTableModel(Colunas, 0);
@@ -363,14 +350,12 @@ public class TelaAdmin2 extends JFrame{
             celula.setHorizontalAlignment(Element.ALIGN_CENTER);
             pdfTabela.addCell(celula);
         }
-
-        for (int row = 0; row < tabela.getRowCount(); row++) {
-            for (int col = 0; col < tabela.getColumnCount(); col++) {
-                Object valor = tabela.getValueAt(row, col);
+        for (int linha = 0; linha < tabela.getRowCount(); linha++) {
+            for (int coluna = 0; coluna < tabela.getColumnCount(); coluna++) {
+                Object valor = tabela.getValueAt(linha, coluna);
                 pdfTabela.addCell(valor != null ? valor.toString() : "");
             }
         }
-
         documento.add(pdfTabela);
         JOptionPane.showMessageDialog(null, "Pauta Criada!");
 
@@ -380,9 +365,8 @@ public class TelaAdmin2 extends JFrame{
         documento.close();
     }
       }
-       
        public void pdfPautaExames(JTable tabela, String caminho) {
-    Document documento = new Document(PageSize.A4.rotate()); 
+    Document documento = new Document(PageSize.A4.rotate());
     try {
         PdfWriter.getInstance(documento, new FileOutputStream(caminho));
         documento.open();
@@ -395,7 +379,8 @@ public class TelaAdmin2 extends JFrame{
         documento.add(titulo);
         documento.add(Chunk.NEWLINE);
 
-        com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance("C:/Users/Anderson/Onedrive/NetBeansProjects/ProjectoES3FI/src/main/java/Professor/ES3.png");
+        com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance(
+            "C:/Users/Anderson/Onedrive/NetBeansProjects/ProjectoES3FI/src/main/java/Professor/ES3.png");
         logo.scaleToFit(120, 120);
         logo.setAlignment(Element.ALIGN_CENTER);
         documento.add(logo);
@@ -408,22 +393,46 @@ public class TelaAdmin2 extends JFrame{
 
         PdfPTable pdfTabela = new PdfPTable(tabela.getColumnCount());
         pdfTabela.setWidthPercentage(100);
-
         for (int i = 0; i < tabela.getColumnCount(); i++) {
-            PdfPCell celula = new PdfPCell(new Phrase(tabela.getColumnName(i), infoFont));
+            String nomeColuna = tabela.getColumnName(i);
+            if (nomeColuna.equalsIgnoreCase("apelido_aluno")) continue;
+            if (nomeColuna.equalsIgnoreCase("nome_aluno")) nomeColuna = "Nome Completo";
+
+            PdfPCell celula = new PdfPCell(new Phrase(nomeColuna, infoFont));
             celula.setBackgroundColor(BaseColor.LIGHT_GRAY);
             celula.setHorizontalAlignment(Element.ALIGN_CENTER);
             pdfTabela.addCell(celula);
         }
 
-        for (int row = 0; row < tabela.getRowCount(); row++) {
-            for (int col = 0; col < tabela.getColumnCount(); col++) {
-                Object valor = tabela.getValueAt(row, col);
-                PdfPCell celula = new PdfPCell(new Phrase(valor != null ? valor.toString() : "", infoFont));
-                celula.setHorizontalAlignment(Element.ALIGN_CENTER);
-                pdfTabela.addCell(celula);
+        for (int linha = 0; linha < tabela.getRowCount(); linha++) {
+            String nome = "";
+            String apelido = "";
+            for (int coluna = 0; coluna < tabela.getColumnCount(); coluna++) {
+                String nomeColuna = tabela.getColumnName(coluna);
+                if (nomeColuna.equalsIgnoreCase("nome_aluno")) {
+                    nome = tabela.getValueAt(linha, coluna).toString();
+                } else if (nomeColuna.equalsIgnoreCase("apelido_aluno")) {
+                    apelido = tabela.getValueAt(linha, coluna) != null ? tabela.getValueAt(linha, coluna).toString() : "";
+                }
+            }
+            //Juntar nome e apelido na mesma linha/celula
+        for (int coluna = 0; coluna < tabela.getColumnCount(); coluna++) {
+        String nomeColuna = tabela.getColumnName(coluna);
+        if (nomeColuna.equalsIgnoreCase("nome_aluno")) {
+            String nomeCompleto = nome + (apelido.isEmpty() ? "" : " " + apelido + "");
+            PdfPCell celula = new PdfPCell(new Phrase(nomeCompleto, infoFont));
+            celula.setHorizontalAlignment(Element.ALIGN_CENTER);
+            pdfTabela.addCell(celula);
+        } 
+        else if (!nomeColuna.equalsIgnoreCase("apelido_aluno")) {
+            Object valor = tabela.getValueAt(linha, coluna);
+            PdfPCell celula = new PdfPCell(new Phrase(valor != null ? valor.toString() : "", infoFont));
+            celula.setHorizontalAlignment(Element.ALIGN_CENTER);
+            pdfTabela.addCell(celula);
+                }
             }
         }
+
         documento.add(pdfTabela);
         JOptionPane.showMessageDialog(null, "Pauta de Exames feita!");
 
@@ -433,8 +442,6 @@ public class TelaAdmin2 extends JFrame{
         documento.close();
     }
 }
-
-      
       private void verSenhaprof(){
           try(Connection conn =  conexao.conectar()) {
               idProf = Integer.parseInt(txtId.getText());
@@ -484,47 +491,72 @@ public class TelaAdmin2 extends JFrame{
       private void carregarPautasExame() {
     Classe classe = (Classe) cbClasse.getSelectedItem();
     if (classe == null) return;
+
     linhas.setRowCount(0);
+
     String sql = """
-        SELECT a.nome_aluno,
-               (SELECT n.n1 FROM nota n WHERE n.id_aluno = a.id_aluno AND n.id_disciplina = 1 AND n.id_classe = ? LIMIT 1) AS portugues,
-               (SELECT n.n1 FROM nota n WHERE n.id_aluno = a.id_aluno AND n.id_disciplina = 2 AND n.id_classe = ? LIMIT 1) AS matematica,
-               (SELECT n.n1 FROM nota n WHERE n.id_aluno = a.id_aluno AND n.id_disciplina = 3 AND n.id_classe = ? LIMIT 1) AS biologia,
-               (SELECT n.n1 FROM nota n WHERE n.id_aluno = a.id_aluno AND n.id_disciplina = 4 AND n.id_classe = ? LIMIT 1) AS fisica,
-               (SELECT n.n1 FROM nota n WHERE n.id_aluno = a.id_aluno AND n.id_disciplina = 5 AND n.id_classe = ? LIMIT 1) AS ingles
-        FROM aluno a
-        WHERE a.id_classe = ?
+        SELECT 
+            a.id_aluno,
+            CONCAT(a.nome_aluno, ' ', a.apelido_aluno) AS nome_completo,
+            MAX(CASE WHEN d.nome_disciplina LIKE 'Portugues%' THEN e.nota END) AS portugues,
+            MAX(CASE WHEN d.nome_disciplina LIKE 'Matematica%' THEN e.nota END) AS matematica,
+            MAX(CASE WHEN d.nome_disciplina LIKE 'Biologia%' THEN e.nota END) AS biologia,
+            MAX(CASE WHEN d.nome_disciplina LIKE 'Fisica%' THEN e.nota END) AS fisica,
+            MAX(CASE WHEN d.nome_disciplina LIKE 'Ingles%' THEN e.nota END) AS ingles,
+            ROUND((
+                COALESCE(MAX(CASE WHEN d.nome_disciplina LIKE 'Portugues%' THEN e.nota END),0) +
+                COALESCE(MAX(CASE WHEN d.nome_disciplina LIKE 'Matematica%' THEN e.nota END),0) +
+                COALESCE(MAX(CASE WHEN d.nome_disciplina LIKE 'Biologia%' THEN e.nota END),0) +
+                COALESCE(MAX(CASE WHEN d.nome_disciplina LIKE 'Fisica%' THEN e.nota END),0) +
+                COALESCE(MAX(CASE WHEN d.nome_disciplina LIKE 'Ingles%' THEN e.nota END),0)
+            ) / 5, 2) AS media_final,
+            CASE 
+                WHEN ROUND((
+                    COALESCE(MAX(CASE WHEN d.nome_disciplina LIKE 'Portugues%' THEN e.nota END),0) +
+                    COALESCE(MAX(CASE WHEN d.nome_disciplina LIKE 'Matematica%' THEN e.nota END),0) +
+                    COALESCE(MAX(CASE WHEN d.nome_disciplina LIKE 'Biologia%' THEN e.nota END),0) +
+                    COALESCE(MAX(CASE WHEN d.nome_disciplina LIKE 'Fisica%' THEN e.nota END),0) +
+                    COALESCE(MAX(CASE WHEN d.nome_disciplina LIKE 'Ingles%' THEN e.nota END),0)
+                ) / 5, 2) >= 10 THEN 'Aprovado'
+                ELSE 'Reprovado'
+            END AS situacao
+        FROM exame e
+        JOIN aluno a ON e.id_aluno = a.id_aluno
+        JOIN disciplina d ON e.id_disciplina = d.id_disciplina
+        WHERE e.id_classe = ?
+        GROUP BY a.id_aluno, nome_completo
+        ORDER BY nome_completo;
     """;
 
     try (Connection conn = conexao.conectar();
          PreparedStatement ps = conn.prepareStatement(sql)) {
-
-        for (int i = 1; i <= 6; i++) {
-            ps.setInt(i, classe.getId_Classe());
-        }
-
+        ps.setInt(1, classe.getId_Classe());
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
+            String nome = rs.getString("nome_completo");
             double port = rs.getDouble("portugues");
             double mat = rs.getDouble("matematica");
             double bio = rs.getDouble("biologia");
-            double fisi = rs.getDouble("fisica");
+            double fis = rs.getDouble("fisica");
             double ing = rs.getDouble("ingles");
-            double mediaFinal = Math.round((port + mat + bio + fisi + ing) / 5 * 100.0) / 100.0;
-            String situacao = mediaFinal >= 10 ? "Aprovado" : "Reprovado";
-            Object[] row = {
-                rs.getString("nome_aluno"), port, mat, bio, fisi, ing, mediaFinal,
-                situacao
-            };
-            linhas.addRow(row);
+            double media = rs.getDouble("media_final");
+             String situacao;
+            if (port < 10 || mat < 10 || bio < 10 || fis < 10 || ing < 10) {
+                situacao = "Reprovado";
+            } else {
+                situacao = "Aprovado";
+            }
+            linhas.addRow(new Object[]{
+                nome, port, mat, bio, fis, ing, media, situacao
+            });
         }
+        tabela.setDefaultEditor(Object.class, null);
 
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Erro ao carregar pautas de exame: " + e.getMessage());
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, 
+            "erro:"+ e.getMessage());
     }
-}
-
-      
+      }
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel("com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialDarkerIJTheme");
@@ -537,6 +569,5 @@ public class TelaAdmin2 extends JFrame{
         Turma turma = new Turma();
         Trimestre t = new Trimestre();
         SwingUtilities.invokeLater(()-> new TelaAdmin2(aluno, professor, classe, disciplina, turma,t).setVisible(true));
-    }
-    
+    } 
 }

@@ -6,6 +6,7 @@ package Acesso;
 
 import Aluno.Aluno;
 import Professor.Professor;
+import javax.swing.UIManager;
 
 /**
  *
@@ -17,6 +18,11 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        try {
+            UIManager.setLookAndFeel("com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialDarkerIJTheme");
+        } catch (Exception e) {
+           
+        }
         Professor professor = new Professor();
         Aluno aluno = new Aluno();
         Login lg = new Login(professor, aluno);

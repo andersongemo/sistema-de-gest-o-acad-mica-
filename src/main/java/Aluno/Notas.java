@@ -34,8 +34,10 @@ public class Notas extends JFrame {
     private JButton btnNotas, btnExame, btnEditDados, btnHist, btnSair, btnAtualizarDados;
     private Connection conn;
     private Aluno aluno;
+    private JComboBox cbTrimestre;
     private JLabel lbNome, lbApelido, lbDn, lbDoc, lbSenha;
     private JTextField txtNome, txtApelido, txtDoc, txtDn, txtSenha;
+    private DefaultTableModel modelo, linhas;
 
     public Notas(Aluno aluno) {
         this.aluno = aluno;
@@ -99,9 +101,10 @@ public class Notas extends JFrame {
         menuEsquerdo.add(btnEditDados);
 
         FlatSVGIcon iconHist = new FlatSVGIcon("svg/pasta.svg", 40, 40);
-        btnHist = new JButton("Dados", iconHist);
+        btnHist = new JButton("Info", iconHist);
         btnHist.setBounds(10, 270, 130, 50);
         btnHist.setFont(rw);
+        btnHist.addActionListener(e-> painelInfoEscola());
         btnHist.setForeground(Color.white);
         menuEsquerdo.add(btnHist);
 
@@ -135,7 +138,6 @@ public class Notas extends JFrame {
             JOptionPane.showMessageDialog(null, erro.getMessage());
         }
     }
-   
 
     private void mostrarPainelNotas() {
         painelConteudo.removeAll();
@@ -149,7 +151,7 @@ public class Notas extends JFrame {
         lblTrim.setBounds(20, 20, 100, 25);
         painelConteudo.add(lblTrim);
 
-        JComboBox<String> cbTrimestre = new JComboBox<>();
+        cbTrimestre = new JComboBox<>();
         cbTrimestre.addItem("1 - Trimestre 1");
         cbTrimestre.addItem("2 - Trimestre 2");
         cbTrimestre.addItem("3 - Trimestre 3");
@@ -158,7 +160,7 @@ public class Notas extends JFrame {
         painelConteudo.add(cbTrimestre);
 
         String[] colunas = {"Disciplina", "Teste 1", "Teste 2", "Teste 3", "Media", "Situacao"};
-        DefaultTableModel linhas = new DefaultTableModel(colunas, 0) {
+        linhas = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
@@ -172,17 +174,50 @@ public class Notas extends JFrame {
         scroll.setForeground(Color.white);
         painelConteudo.add(scroll);
 
-      /*  JButton btnAtualizar = new JButton("Atualizar");
-        btnAtualizar.setBounds(300, 380, 120, 25);
-        painelConteudo.add(btnAtualizar);
+       cbTrimestre.addActionListener(e -> mostrarNotas(linhas,getTrimestreSelecionado()));
 
-        ActionListener verNotas = e -> carregarNotas(linhas, cbTrimestre.getSelectedIndex() + 1);
-        cbTrimestre.addActionListener(verNotas);
-        btnAtualizar.addActionListener(verNotas);*/
-
-        mostrarNotas(linhas, 1);
+       mostrarNotas(linhas, getTrimestreSelecionado());
         painelConteudo.revalidate();
         }
+        private void painelInfoEscola() {
+        painelConteudo.removeAll();
+        painelConteudo.repaint();
+        Font rw = new Font("Rockwell", Font.BOLD, 14);
+
+        JLabel titulo = new JLabel("INFORMAÇÕES DA ESCOLA");
+        titulo.setFont(rw);
+        titulo.setForeground(Color.white);
+        titulo.setBounds(220, 20, 300, 30);
+        painelConteudo.add(titulo);
+
+        JTextArea txtInfo = new JTextArea();
+        txtInfo.setText("""
+        ESCOLA SECUNDÁRIA 3 DE FEVEREIRO DE INHAMBANE
+        
+        Endereço: Av. Samora Machel - Cidade de Inhambane
+        Telefone: (+258) 84 010 0101
+        Email: es3fi@gmail.com
+        
+        A Escola Secundária 3 de Fevereiro é uma das
+        instituições de ensino mais antigas da província
+        de Inhambane. O seu compromisso é formar alunos
+        responsáveis, críticos e preparados para os desafios
+        académicos e sociais do futuro.
+        
+        Diretor: Anderson B. Gemo
+        Plantar para Colher.
+        """);
+
+        txtInfo.setFont(new Font("Rockwell", Font.BOLD, 13));
+        txtInfo.setForeground(Color.white);
+        txtInfo.setEditable(false);
+        txtInfo.setBounds(50, 70, 500, 270);
+        txtInfo.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+        painelConteudo.add(txtInfo);
+        painelConteudo.revalidate();
+        painelConteudo.repaint();
+        }
+
         private void mostrarPainelExames() {
         painelConteudo.removeAll();
         painelConteudo.repaint();
@@ -279,7 +314,6 @@ public class Notas extends JFrame {
      btnAtualizarDados.setIcon(icon1);
      btnAtualizarDados.addActionListener(e-> atualizarDados());
      painelConteudo.add(btnAtualizarDados);
-     
      }
          private void atualizarDados(){
            try(Connection conn = conexao.conectar()){
@@ -327,10 +361,14 @@ public class Notas extends JFrame {
         JOptionPane.showMessageDialog(null, "Erro ao carregar exames: " + e.getMessage());
          }
                  }
+     private int getTrimestreSelecionado() {
+        if (cbTrimestre.getSelectedItem() == null) return 1;
+        return Integer.parseInt(cbTrimestre.getSelectedItem().toString().split(" - ")[0]);
+    }
 
 
-    private void mostrarNotas(DefaultTableModel modelo, int trimestre) {
-        modelo.setRowCount(0);
+    public void mostrarNotas(DefaultTableModel modelo, int trimestre) {
+        linhas.setRowCount(0);
         try {
             String sql = "select d.nome_disciplina, n.n1, n.n2, n.n3, n.situacao " +
                     "from disciplina d " +

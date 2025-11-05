@@ -8,7 +8,6 @@ import java.awt.event.*;
 import java.sql.*;
 import javax.swing.table.DefaultTableModel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialDarkerIJTheme;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
@@ -30,7 +29,6 @@ public class TelaProfessor extends JFrame {
     private Classe classe;
     private Trimestre trimestre;
     private JTextField txtNome, txtApelido, txtDoc, txtDn, txtSenha;
-
     private JTable tabela, tabelaExame;
     private DefaultTableModel linhas, modelo;
     private JComboBox<String> cbTrimestre;
@@ -352,14 +350,12 @@ public class TelaProfessor extends JFrame {
     titulo.setBounds(10, 10, 100, 30);
     titulo.setForeground(Color.white);
     painelConteudo.add(titulo);
-
     modelo = new DefaultTableModel(new String[]{"ID", "Aluno", "Exame", "Situação"}, 0) {
         @Override
         public boolean isCellEditable(int row, int col) {
             return col == 2;
         }
     };
-
     tabelaExame = new JTable(modelo);
     tabelaExame.setFont(new Font("Rockwell", Font.BOLD, 12));
     JScrollPane scroll = new JScrollPane(tabelaExame);
@@ -367,13 +363,14 @@ public class TelaProfessor extends JFrame {
     scroll.setBounds(10, 50, 640, 290);
     painelConteudo.add(scroll);
 
+        carregarExames();
     btnSalvarExame = new JButton("Guardar");
     btnSalvarExame.setBounds(10, 360, 120, 35);
     btnSalvarExame.addActionListener(e -> salvarExames());
     btnSalvarExame.setFont(rw);
     btnSalvarExame.setForeground(Color.white);
     painelConteudo.add(btnSalvarExame);
-    carregarExames();
+
 
     painelConteudo.revalidate();
     painelConteudo.repaint();
@@ -398,7 +395,6 @@ public class TelaProfessor extends JFrame {
                 String nome = rs.getString("nome_aluno") + " " + rs.getString("apelido_aluno");
                 double nota = rs.getDouble("nota");
                 String situacao = rs.getString("situacao");
-
                 if (rs.wasNull()) {
                     nota = 0.0;
                     situacao = "Pendente";
@@ -411,11 +407,10 @@ public class TelaProfessor extends JFrame {
     }
      private void salvarExames() {
         try {
-            String sql = "INSERT INTO exame (id_aluno, id_prof, id_disciplina, id_classe, nota, situacao) " +
-                         "VALUES (?, ?, ?, ?, ?, ?) " +
-                         "ON DUPLICATE KEY UPDATE nota = VALUES(nota), situacao = VALUES(situacao)";
+            String sql = "Insert Into exame (id_aluno, id_prof, id_disciplina, id_classe, nota, situacao) " +
+                         "values (?, ?, ?, ?, ?, ?) " +
+                         "on duplicate key UPDATE nota = VALUES(nota), situacao = VALUES(situacao)";
             PreparedStatement ps = conn.prepareStatement(sql);
-
             for (int i = 0; i < modelo.getRowCount(); i++) {
                 int idAluno = (int) modelo.getValueAt(i, 0);
                 double nota = Double.parseDouble(modelo.getValueAt(i, 2).toString());
@@ -428,7 +423,6 @@ public class TelaProfessor extends JFrame {
                 ps.setString(6, situacao);
                 ps.executeUpdate();
             }
-            ps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Notas inseridas!");
             carregarExames();
         } catch (SQLException e) {

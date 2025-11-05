@@ -14,6 +14,7 @@ outro\Cadastro.class
 outro\Cadastro$1.class
 Aluno\Notas$1.class
 Professor\TelaProfessor$2.class
+Admin\TelaAdmin$4.class
 Acesso\Login.class
 Aluno\conexao.class
 Exercicios\Tela.class

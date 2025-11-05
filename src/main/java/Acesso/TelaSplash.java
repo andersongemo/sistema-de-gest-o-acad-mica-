@@ -39,11 +39,7 @@ public class TelaSplash extends JFrame {
         JLabel titulo = new JLabel("ES3FI", SwingConstants.CENTER);
         titulo.setFont(new Font("Rockwell", Font.BOLD, 26));
         titulo.setForeground(Color.WHITE);
-
-
         painelCentro.add(labelImagem, BorderLayout.CENTER);
-
-
         pb = new JProgressBar(0, 100);
         pb.setForeground(Color.ORANGE);
         pb.setStringPainted(true);
@@ -69,7 +65,8 @@ public class TelaSplash extends JFrame {
                 dispose();
                 try {
                     UIManager.setLookAndFeel("com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialDarkerIJTheme");
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
 
                 Aluno aluno = new Aluno();
                 Professor professor = new Professor();
@@ -80,7 +77,6 @@ public class TelaSplash extends JFrame {
             }
         }).start();
     }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
