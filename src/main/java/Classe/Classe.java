@@ -36,6 +36,7 @@ private int id_Classe;
     public void setNivel_Classe(String nivel_Classe) {
         this.nivel_Classe = nivel_Classe;
     }
+    
     @Override 
     public String toString(){
      return nome_Classe;   

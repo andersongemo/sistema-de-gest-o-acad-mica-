@@ -15,6 +15,7 @@ public class Professor {
     private String apelido_Professor;
     private String dataNasc;
     private String NrBiProf;
+    
     public String getNrBiProf() {
         return NrBiProf;
     }

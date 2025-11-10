@@ -7,7 +7,6 @@ package Admin;
 
 
 import Professor.*;
-import outro.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import javax.swing.JOptionPane;
@@ -16,7 +15,6 @@ import javax.swing.JOptionPane;
  *
  * @author Anderson
  */
-
 public class conexao {
     private static final String url = "jdbc:mysql://localhost:3306/novo";
     private static final String user = "root";

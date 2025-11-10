@@ -380,14 +380,14 @@ public class TelaAdmin extends JFrame{
          Font rw = new Font("Rockwell", Font.BOLD, 12); 
     painelConteudo.removeAll();
     painelConteudo.repaint();
-      String[] Colunas = {"CODIGO", "NOME","APELIDO", "DATA DE NASCIMENTO"};
+    String[] Colunas = {"CODIGO", "NOME","APELIDO", "DATA DE NASCIMENTO"};
     linhas = new DefaultTableModel(Colunas,0);
     tabela = new JTable(linhas);
     scroll = new JScrollPane(tabela);
     scroll.setBounds(10, 40, 600, 250);
     tabela.setForeground(Color.white);//tabela.setFont(rw);
     painelConteudo.add(scroll); 
-    verAlunos();
+    // verAlunos();
     
     FlatSVGIcon btnIcon  = new FlatSVGIcon("svg/atualizar.svg");
     btnAtualizar = new JButton("Atualizar");
