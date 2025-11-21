@@ -1,0 +1,88 @@
+Sistema de Gestao escolar/ Java / Swing
+#Java - Version
+ :java 21.0.7 2025-04-15 LTS
+Java(TM) SE Runtime Environment (build 21.0.7+8-LTS-245)
+Java HotSpot(TM) 64-Bit Server VM (build 21.0.7+8-LTS-245, mixed mode, sharing)
+...............................................................................
+ #DataBase/MySql 
+-----COMO USAR?------
+1: Criar as tabelas na base de dados
+2: Abrir a tela do admin pra inserir as Classes, disciplinas, turmas
+3:Trimestre(3) deve ser inserido diretamente da base de dados
+:)
++---------------+-------------+------+-----+---------+----------------+
+| Field         | Type        | Null | Key | Default | Extra          |
++---------------+-------------+------+-----+---------+----------------+
+| id_aluno      | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nome_aluno    | varchar(50) | NO   |     | NULL    |                |
+| apelido_aluno | varchar(50) | YES  |     | NULL    |                |
+| anonas_aluno  | date        | YES  |     | NULL    |                |
+| id_turma      | int(11)     | YES  |     | NULL    |                |
+| sexo_aluno    | varchar(20) | YES  |     | NULL    |                |
+| nr_bi_aluno   | varchar(11) | YES  |     | NULL    |                |
+| senha_aluno   | varchar(8)  | YES  |     | NULL    |                |
+| id_classe     | int(11)     | YES  | MUL | NULL    |                |
++---------------+-------------+------+-----+---------+----------------+
++---------------+-------------+------+-----+---------+----------------+
+| Field         | Type        | Null | Key | Default | Extra          |
++---------------+-------------+------+-----+---------+----------------+
+| id_prof       | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nome_prof     | varchar(25) | YES  |     | NULL    |                |
+| apelido_prof  | varchar(20) | YES  |     | NULL    |                |
+| senha         | varchar(8)  | YES  |     | NULL    |                |
+| id_disciplina | int(11)     | YES  | MUL | NULL    |                |
+| id_classe     | int(11)     | YES  | MUL | NULL    |                |
+| sexo_prof     | varchar(20) | YES  |     | NULL    |                |
+| nr_bi_prof    | varchar(20) | YES  |     | NULL    |                |
+| anonas_prof   | date        | YES  |     | NULL    |                |
++---------------+-------------+------+-----+---------+----------------+
++-----------------+-------------+------+-----+---------+----------------+
+| Field           | Type        | Null | Key | Default | Extra          |
++-----------------+-------------+------+-----+---------+----------------+
+| id_disciplina   | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nome_disciplina | varchar(25) | YES  |     | NULL    |                |
+| id_classe       | int(11)     | YES  |     | NULL    |                |
++-----------------+-------------+------+-----+---------+----------------+
++------------+-------------+------+-----+---------+----------------+
+| Field      | Type        | Null | Key | Default | Extra          |
++------------+-------------+------+-----+---------+----------------+
+| id_turma   | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nome_turma | varchar(20) | YES  |     | NULL    |                |
+| id_classe  | int(11)     | YES  | MUL | NULL    |                |
++------------+-------------+------+-----+---------+----------------+
++---------------+-------------+------+-----+---------+----------------+
+| Field         | Type        | Null | Key | Default | Extra          |
++---------------+-------------+------+-----+---------+----------------+
+| id_trimestre  | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nome_semestre | varchar(20) | YES  |     | NULL    |                |
++---------------+-------------+------+-----+---------+----------------+
++-----------------+-------------+------+-----+---------+----------------+
+| Field           | Type        | Null | Key | Default | Extra          |
++-----------------+-------------+------+-----+---------+----------------+
+| id_disciplina   | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nome_disciplina | varchar(25) | YES  |     | NULL    |                |
+| id_classe       | int(11)     | YES  |     | NULL    |                |
++-----------------+-------------+------+-----+---------+----------------+
+
++-------------+-------------+------+-----+---------+----------------+
+| Field       | Type        | Null | Key | Default | Extra          |
++-------------+-------------+------+-----+---------+----------------+
+| id_classe   | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nome_classe | varchar(25) | YES  |     | NULL    |                |
++-------------+-------------+------+-----+---------+----------------+
+
++---------------+-------------+------+-----+---------+----------------+
+| Field         | Type        | Null | Key | Default | Extra          |
++---------------+-------------+------+-----+---------+----------------+
+| id_prof       | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nome_prof     | varchar(25) | YES  |     | NULL    |                |
+| apelido_prof  | varchar(20) | YES  |     | NULL    |                |
+| senha         | varchar(8)  | YES  |     | NULL    |                |
+| id_disciplina | int(11)     | YES  | MUL | NULL    |                |
+| id_classe     | int(11)     | YES  | MUL | NULL    |                |
+| sexo_prof     | varchar(20) | YES  |     | NULL    |                |
+| nr_bi_prof    | varchar(20) | YES  |     | NULL    |                |
+| anonas_prof   | date        | YES  |     | NULL    |                |
++---------------+-------------+------+-----+---------+----------------+
+-Anderson Belarmino Gemo-
+
